@@ -26,14 +26,15 @@ import type {
 	StreamOptions,
 	TextContent,
 	ThinkingContent,
-	Tool,
 	ToolCall,
+	ToolDefinition,
 	ToolResultMessage,
 } from "../types.ts";
 import { AssistantMessageEventStream } from "../utils/event-stream.ts";
 import { headersToRecord } from "../utils/headers.ts";
 import { parseStreamingJson } from "../utils/json-parse.ts";
 import { sanitizeSurrogates } from "../utils/sanitize-unicode.ts";
+import { functionToolCallArguments, isCustomTool, resolveFunctionTools } from "../utils/tool-support.ts";
 import { isCloudflareProvider, resolveCloudflareBaseUrl } from "./cloudflare.ts";
 import { buildCopilotDynamicHeaders, hasCopilotVisionInput } from "./github-copilot-headers.ts";
 import { clampOpenAIPromptCacheKey } from "./openai-prompt-cache.ts";
@@ -744,6 +745,9 @@ export function convertMessages(
 	compat: ResolvedOpenAICompletionsCompat,
 ): ChatCompletionMessageParam[] {
 	const params: ChatCompletionMessageParam[] = [];
+	const customToolsByName = new Map(
+		context.tools?.filter(isCustomTool).map((tool) => [tool.name, tool] as const) ?? [],
+	);
 
 	const normalizeToolCallId = (id: string): string => {
 		// Handle pipe-separated IDs from OpenAI Responses API
@@ -873,7 +877,7 @@ export function convertMessages(
 					type: "function" as const,
 					function: {
 						name: tc.name,
-						arguments: JSON.stringify(tc.arguments),
+						arguments: JSON.stringify(functionToolCallArguments(tc, customToolsByName.get(tc.name))),
 					},
 				}));
 				const reasoningDetails = toolCalls
@@ -985,10 +989,10 @@ export function convertMessages(
 }
 
 function convertTools(
-	tools: Tool[],
+	tools: ToolDefinition[],
 	compat: ResolvedOpenAICompletionsCompat,
 ): OpenAI.Chat.Completions.ChatCompletionTool[] {
-	return tools.map((tool) => ({
+	return resolveFunctionTools("OpenAI Chat Completions", tools).map((tool) => ({
 		type: "function",
 		function: {
 			name: tool.name,

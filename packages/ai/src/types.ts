@@ -247,7 +247,14 @@ export interface ToolCall {
 	type: "toolCall";
 	id: string;
 	name: string;
+	/**
+	 * Tool call payload kind. Omitted means the existing JSON-schema function
+	 * tool protocol. Custom tool calls carry raw text input in `input`.
+	 */
+	kind?: "function" | "custom";
 	arguments: Record<string, any>;
+	/** Raw input for provider-native custom/freeform tools. */
+	input?: string;
 	thoughtSignature?: string; // Google-specific: opaque signature for reusing thought context
 }
 
@@ -330,10 +337,39 @@ export interface Tool<TParameters extends TSchema = TSchema> {
 	parameters: TParameters;
 }
 
+export type CustomToolInputFormat =
+	| { type: "text" }
+	| {
+			type: "grammar";
+			syntax: "lark" | "regex";
+			definition: string;
+	  };
+
+export interface CustomToolFunctionFallback<TParameters extends TSchema = TSchema> {
+	/** Override the function-tool description for providers without native custom tools. */
+	description?: string;
+	/** JSON Schema parameters for providers without native custom tools. */
+	parameters: TParameters;
+	/** Field that carries the raw custom input when falling back to a function tool. Default: `input`. */
+	inputField?: string;
+}
+
+export interface CustomTool<TParameters extends TSchema = TSchema> {
+	/** Provider-native freeform/custom tool. */
+	type: "custom";
+	name: string;
+	description: string;
+	format?: CustomToolInputFormat;
+	/** Explicit function-tool fallback for providers without native custom-tool support. */
+	fallback?: CustomToolFunctionFallback<TParameters>;
+}
+
+export type ToolDefinition<TParameters extends TSchema = TSchema> = Tool<TParameters> | CustomTool<TParameters>;
+
 export interface Context {
 	systemPrompt?: string;
 	messages: Message[];
-	tools?: Tool[];
+	tools?: ToolDefinition[];
 }
 
 /**

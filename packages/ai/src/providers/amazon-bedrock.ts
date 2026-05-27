@@ -37,14 +37,15 @@ import type {
 	ThinkingBudgets,
 	ThinkingContent,
 	ThinkingLevel,
-	Tool,
 	ToolCall,
+	ToolDefinition,
 	ToolResultMessage,
 } from "../types.ts";
 import { AssistantMessageEventStream } from "../utils/event-stream.ts";
 import { parseStreamingJson } from "../utils/json-parse.ts";
 import { createHttpProxyAgentsForTarget } from "../utils/node-http-proxy.ts";
 import { sanitizeSurrogates } from "../utils/sanitize-unicode.ts";
+import { functionToolCallArguments, isCustomTool, resolveFunctionTools } from "../utils/tool-support.ts";
 import { adjustMaxTokensForThinking, buildBaseOptions, clampReasoning } from "./simple-options.ts";
 import { transformMessages } from "./transform-messages.ts";
 
@@ -616,6 +617,9 @@ function convertMessages(
 ): Message[] {
 	const result: Message[] = [];
 	const transformedMessages = transformMessages(context.messages, model, normalizeToolCallId);
+	const customToolsByName = new Map(
+		context.tools?.filter(isCustomTool).map((tool) => [tool.name, tool] as const) ?? [],
+	);
 
 	for (let i = 0; i < transformedMessages.length; i++) {
 		const m = transformedMessages[i];
@@ -662,7 +666,11 @@ function convertMessages(
 							break;
 						case "toolCall":
 							contentBlocks.push({
-								toolUse: { toolUseId: c.id, name: c.name, input: c.arguments },
+								toolUse: {
+									toolUseId: c.id,
+									name: c.name,
+									input: functionToolCallArguments(c, customToolsByName.get(c.name)),
+								},
 							});
 							break;
 						case "thinking":
@@ -776,12 +784,12 @@ function convertMessages(
 }
 
 function convertToolConfig(
-	tools: Tool[] | undefined,
+	tools: ToolDefinition[] | undefined,
 	toolChoice: BedrockOptions["toolChoice"],
 ): ToolConfiguration | undefined {
 	if (!tools?.length || toolChoice === "none") return undefined;
 
-	const bedrockTools: BedrockTool[] = tools.map((tool) => ({
+	const bedrockTools: BedrockTool[] = resolveFunctionTools("Amazon Bedrock", tools).map((tool) => ({
 		toolSpec: {
 			name: tool.name,
 			description: tool.description,

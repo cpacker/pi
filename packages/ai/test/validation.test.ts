@@ -1,6 +1,6 @@
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
-import type { Tool, ToolCall } from "../src/types.ts";
+import type { CustomTool, Tool, ToolCall } from "../src/types.ts";
 import { validateToolArguments } from "../src/utils/validation.ts";
 
 function createToolCallWithPlainSchema(
@@ -112,5 +112,24 @@ describe("validateToolArguments", () => {
 			const { tool, toolCall } = createToolCallWithPlainSchema(testCase.schema, testCase.input);
 			expect(() => validateToolArguments(tool, toolCall)).toThrow("Validation failed");
 		}
+	});
+
+	it("returns raw input for custom tool calls", () => {
+		const tool: CustomTool = {
+			type: "custom",
+			name: "apply_patch",
+			description: "Apply a patch",
+			format: { type: "text" },
+		};
+		const toolCall: ToolCall = {
+			type: "toolCall",
+			id: "call_patch|ctc_patch",
+			name: "apply_patch",
+			kind: "custom",
+			input: "*** Begin Patch",
+			arguments: { input: "*** Begin Patch" },
+		};
+
+		expect(validateToolArguments(tool, toolCall)).toBe("*** Begin Patch");
 	});
 });

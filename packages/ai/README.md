@@ -213,7 +213,7 @@ Tools enable LLMs to interact with external systems. This library uses TypeBox s
 ### Defining Tools
 
 ```typescript
-import { Type, Tool, StringEnum } from '@earendil-works/pi-ai';
+import { Type, Tool, CustomTool, StringEnum } from '@earendil-works/pi-ai';
 
 // Define tool parameters with TypeBox
 const weatherTool: Tool = {
@@ -239,6 +239,22 @@ const bookMeetingTool: Tool = {
   })
 };
 ```
+
+OpenAI Responses models also support provider-native custom tools with raw text input:
+
+```typescript
+const applyPatchTool: CustomTool = {
+  type: 'custom',
+  name: 'apply_patch',
+  description: 'Apply a patch',
+  format: { type: 'grammar', syntax: 'lark', definition: 'start: /[\\s\\S]+/' },
+  fallback: {
+    parameters: Type.Object({ input: Type.String() })
+  }
+};
+```
+
+Providers without native custom-tool support use `fallback` when it is provided. If no fallback is provided, they reject `CustomTool` definitions instead of silently changing the protocol.
 
 ### Handling Tool Calls
 

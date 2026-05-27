@@ -41,6 +41,7 @@ import {
 	type ThinkingContent,
 	type Tool,
 	type ToolCall,
+	type ToolDefinition,
 	type ToolResultMessage,
 } from "@earendil-works/pi-ai";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
@@ -171,11 +172,30 @@ const claudeCodeTools = [
 ];
 const ccToolLookup = new Map(claudeCodeTools.map((t) => [t.toLowerCase(), t]));
 const toClaudeCodeName = (name: string) => ccToolLookup.get(name.toLowerCase()) ?? name;
-const fromClaudeCodeName = (name: string, tools?: Tool[]) => {
+const fromClaudeCodeName = (name: string, tools?: ToolDefinition[]) => {
 	const lowerName = name.toLowerCase();
 	const matched = tools?.find((t) => t.name.toLowerCase() === lowerName);
 	return matched?.name ?? name;
 };
+
+function resolveFunctionTools(tools: ToolDefinition[]): Tool[] {
+	const functionTools: Tool[] = [];
+	for (const tool of tools) {
+		if (!("parameters" in tool)) {
+			if (!tool.fallback) {
+				throw new Error(`Custom Anthropic provider does not support custom/freeform tools: ${tool.name}`);
+			}
+			functionTools.push({
+				name: tool.name,
+				description: tool.fallback.description ?? tool.description,
+				parameters: tool.fallback.parameters,
+			});
+			continue;
+		}
+		functionTools.push(tool);
+	}
+	return functionTools;
+}
 
 function isOAuthToken(apiKey: string): boolean {
 	return apiKey.includes("sk-ant-oat");
@@ -214,7 +234,7 @@ function convertContentBlocks(
 	return blocks;
 }
 
-function convertMessages(messages: Message[], isOAuth: boolean, _tools?: Tool[]): any[] {
+function convertMessages(messages: Message[], isOAuth: boolean, _tools?: ToolDefinition[]): any[] {
 	const params: any[] = [];
 
 	for (let i = 0; i < messages.length; i++) {
@@ -304,8 +324,8 @@ function convertMessages(messages: Message[], isOAuth: boolean, _tools?: Tool[])
 	return params;
 }
 
-function convertTools(tools: Tool[], isOAuth: boolean): any[] {
-	return tools.map((tool) => ({
+function convertTools(tools: ToolDefinition[], isOAuth: boolean): any[] {
+	return resolveFunctionTools(tools).map((tool) => ({
 		name: isOAuth ? toClaudeCodeName(tool.name) : tool.name,
 		description: tool.description,
 		input_schema: {
