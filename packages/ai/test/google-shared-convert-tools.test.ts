@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { convertTools } from "../src/providers/google-shared.ts";
-import type { Tool } from "../src/types.ts";
+import type { Tool, ToolDefinition } from "../src/types.ts";
+import { APPLY_PATCH_FALLBACK_PARAMETERS, APPLY_PATCH_TOOL } from "./apply-patch-tool-fixture.ts";
 
 function makeTool(parameters: Record<string, unknown>): Tool {
 	return {
@@ -183,5 +184,29 @@ describe("google-shared convertTools", () => {
 	it("returns undefined for empty tool list", () => {
 		expect(convertTools([])).toBeUndefined();
 		expect(convertTools([], true)).toBeUndefined();
+	});
+
+	it("downgrades custom tools with explicit fallback parameters", () => {
+		const result = convertTools([APPLY_PATCH_TOOL], false);
+		const decl = result?.[0]?.functionDeclarations?.[0];
+
+		expect(decl).toEqual({
+			name: "apply_patch",
+			description: APPLY_PATCH_TOOL.description,
+			parametersJsonSchema: APPLY_PATCH_FALLBACK_PARAMETERS,
+		});
+	});
+
+	it("rejects custom tools without fallbacks because Gemini only accepts function declarations", () => {
+		const tools: ToolDefinition[] = [
+			{
+				type: "custom",
+				name: "apply_patch",
+				description: "Apply a patch",
+				format: { type: "text" },
+			},
+		];
+
+		expect(() => convertTools(tools)).toThrow("Google does not support custom/freeform tools: apply_patch");
 	});
 });

@@ -3,8 +3,9 @@
  */
 
 import { type Content, FinishReason, FunctionCallingConfigMode, type Part } from "@google/genai";
-import type { Context, ImageContent, Model, StopReason, TextContent, Tool } from "../types.ts";
+import type { Context, ImageContent, Model, StopReason, TextContent, ToolDefinition } from "../types.ts";
 import { sanitizeSurrogates } from "../utils/sanitize-unicode.ts";
+import { functionToolCallArguments, isCustomTool, resolveFunctionTools } from "../utils/tool-support.ts";
 import { transformMessages } from "./transform-messages.ts";
 
 type GoogleApiType = "google-generative-ai" | "google-vertex";
@@ -90,6 +91,9 @@ function supportsMultimodalFunctionResponse(modelId: string): boolean {
  */
 export function convertMessages<T extends GoogleApiType>(model: Model<T>, context: Context): Content[] {
 	const contents: Content[] = [];
+	const customToolsByName = new Map(
+		context.tools?.filter(isCustomTool).map((tool) => [tool.name, tool] as const) ?? [],
+	);
 	const normalizeToolCallId = (id: string): string => {
 		if (!requiresToolCallId(model.id)) return id;
 		return id.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 64);
@@ -159,7 +163,7 @@ export function convertMessages<T extends GoogleApiType>(model: Model<T>, contex
 					const part: Part = {
 						functionCall: {
 							name: block.name,
-							args: block.arguments ?? {},
+							args: functionToolCallArguments(block, customToolsByName.get(block.name)),
 							...(requiresToolCallId(model.id) ? { id: block.id } : {}),
 						},
 						...(thoughtSignature && { thoughtSignature }),
@@ -270,13 +274,14 @@ function sanitizeForOpenApi(schema: unknown): unknown {
  * models, where the API translates `parameters` into Anthropic's `input_schema`.
  */
 export function convertTools(
-	tools: Tool[],
+	tools: ToolDefinition[],
 	useParameters = false,
 ): { functionDeclarations: Record<string, unknown>[] }[] | undefined {
 	if (tools.length === 0) return undefined;
+	const functionTools = resolveFunctionTools("Google", tools);
 	return [
 		{
-			functionDeclarations: tools.map((tool) => ({
+			functionDeclarations: functionTools.map((tool) => ({
 				name: tool.name,
 				description: tool.description,
 				...(useParameters

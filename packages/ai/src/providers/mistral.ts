@@ -19,13 +19,14 @@ import type {
 	StreamOptions,
 	TextContent,
 	ThinkingContent,
-	Tool,
 	ToolCall,
+	ToolDefinition,
 } from "../types.ts";
 import { AssistantMessageEventStream } from "../utils/event-stream.ts";
 import { shortHash } from "../utils/hash.ts";
 import { parseStreamingJson } from "../utils/json-parse.ts";
 import { sanitizeSurrogates } from "../utils/sanitize-unicode.ts";
+import { functionToolCallArguments, isCustomTool, resolveFunctionTools } from "../utils/tool-support.ts";
 import { buildBaseOptions } from "./simple-options.ts";
 import { transformMessages } from "./transform-messages.ts";
 
@@ -247,7 +248,7 @@ function buildChatPayload(
 	const payload: ChatCompletionStreamRequest = {
 		model: model.id,
 		stream: true,
-		messages: toChatMessages(messages, model.input.includes("image")),
+		messages: toChatMessages(messages, model.input.includes("image"), context.tools),
 	};
 
 	if (context.tools?.length) payload.tools = toFunctionTools(context.tools);
@@ -452,8 +453,8 @@ async function consumeChatStream(
 	}
 }
 
-function toFunctionTools(tools: Tool[]): Array<FunctionTool & { type: "function" }> {
-	return tools.map((tool) => ({
+function toFunctionTools(tools: ToolDefinition[]): Array<FunctionTool & { type: "function" }> {
+	return resolveFunctionTools("Mistral", tools).map((tool) => ({
 		type: "function",
 		function: {
 			name: tool.name,
@@ -480,8 +481,13 @@ function stripSymbolKeys(value: unknown): unknown {
 	return value;
 }
 
-function toChatMessages(messages: Message[], supportsImages: boolean): ChatCompletionStreamRequestMessage[] {
+function toChatMessages(
+	messages: Message[],
+	supportsImages: boolean,
+	tools?: ToolDefinition[],
+): ChatCompletionStreamRequestMessage[] {
 	const result: ChatCompletionStreamRequestMessage[] = [];
+	const customToolsByName = new Map(tools?.filter(isCustomTool).map((tool) => [tool.name, tool] as const) ?? []);
 
 	for (const msg of messages) {
 		if (msg.role === "user") {
@@ -529,7 +535,10 @@ function toChatMessages(messages: Message[], supportsImages: boolean): ChatCompl
 				toolCalls.push({
 					id: block.id,
 					type: "function",
-					function: { name: block.name, arguments: JSON.stringify(block.arguments || {}) },
+					function: {
+						name: block.name,
+						arguments: JSON.stringify(functionToolCallArguments(block, customToolsByName.get(block.name))),
+					},
 				});
 			}
 
