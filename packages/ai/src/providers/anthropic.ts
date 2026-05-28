@@ -23,15 +23,15 @@ import type {
 	StreamOptions,
 	TextContent,
 	ThinkingContent,
-	Tool,
 	ToolCall,
+	ToolDefinition,
 	ToolResultMessage,
 } from "../types.ts";
 import { AssistantMessageEventStream } from "../utils/event-stream.ts";
 import { headersToRecord } from "../utils/headers.ts";
 import { parseJsonWithRepair, parseStreamingJson } from "../utils/json-parse.ts";
 import { sanitizeSurrogates } from "../utils/sanitize-unicode.ts";
-
+import { functionToolCallArguments, isCustomTool, resolveFunctionTools } from "../utils/tool-support.ts";
 import { resolveCloudflareBaseUrl } from "./cloudflare.ts";
 import { buildCopilotDynamicHeaders, hasCopilotVisionInput } from "./github-copilot-headers.ts";
 import { adjustMaxTokensForThinking, buildBaseOptions } from "./simple-options.ts";
@@ -96,7 +96,7 @@ const ccToolLookup = new Map(claudeCodeTools.map((t) => [t.toLowerCase(), t]));
 
 // Convert tool name to CC canonical casing if it matches (case-insensitive)
 const toClaudeCodeName = (name: string) => ccToolLookup.get(name.toLowerCase()) ?? name;
-const fromClaudeCodeName = (name: string, tools?: Tool[]) => {
+const fromClaudeCodeName = (name: string, tools?: ToolDefinition[]) => {
 	if (tools && tools.length > 0) {
 		const lowerName = name.toLowerCase();
 		const matchedTool = tools.find((tool) => tool.name.toLowerCase() === lowerName);
@@ -895,7 +895,7 @@ function buildParams(
 	const { cacheControl } = getCacheControl(model, options?.cacheRetention);
 	const params: MessageCreateParamsStreaming = {
 		model: model.id,
-		messages: convertMessages(context.messages, model, isOAuthToken, cacheControl),
+		messages: convertMessages(context.messages, model, isOAuthToken, cacheControl, context.tools),
 		max_tokens: options?.maxTokens ?? model.maxTokens,
 		stream: true,
 	};
@@ -1001,8 +1001,10 @@ function convertMessages(
 	model: Model<"anthropic-messages">,
 	isOAuthToken: boolean,
 	cacheControl?: CacheControlEphemeral,
+	tools?: ToolDefinition[],
 ): MessageParam[] {
 	const params: MessageParam[] = [];
+	const customToolsByName = new Map(tools?.filter(isCustomTool).map((tool) => [tool.name, tool] as const) ?? []);
 
 	// Transform messages for cross-provider compatibility
 	const transformedMessages = transformMessages(messages, model, normalizeToolCallId);
@@ -1088,7 +1090,7 @@ function convertMessages(
 						type: "tool_use",
 						id: block.id,
 						name: isOAuthToken ? toClaudeCodeName(block.name) : block.name,
-						input: block.arguments ?? {},
+						input: functionToolCallArguments(block, customToolsByName.get(block.name)),
 					});
 				}
 			}
@@ -1165,14 +1167,15 @@ function shouldUseFineGrainedToolStreamingBeta(model: Model<"anthropic-messages"
 }
 
 function convertTools(
-	tools: Tool[],
+	tools: ToolDefinition[],
 	isOAuthToken: boolean,
 	supportsEagerToolInputStreaming: boolean,
 	cacheControl?: CacheControlEphemeral,
 ): Anthropic.Messages.Tool[] {
 	if (!tools) return [];
 
-	return tools.map((tool, index) => {
+	const functionTools = resolveFunctionTools("Anthropic", tools);
+	return functionTools.map((tool, index) => {
 		const schema = tool.parameters as { properties?: unknown; required?: string[] };
 
 		return {
@@ -1184,7 +1187,7 @@ function convertTools(
 				properties: schema.properties ?? {},
 				required: schema.required ?? [],
 			},
-			...(cacheControl && index === tools.length - 1 ? { cache_control: cacheControl } : {}),
+			...(cacheControl && index === functionTools.length - 1 ? { cache_control: cacheControl } : {}),
 		};
 	});
 }
