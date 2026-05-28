@@ -48,4 +48,5 @@ jobs:
         env:
           PI_AI_EXPORT_BRANCH: ${{ github.event.inputs.target_branch || 'pi-ai' }}
           PI_AI_EXPORT_REMOTE: origin
+          PI_AI_EXPORT_REMOTE_URL: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
         run: npm run export:pi-ai
