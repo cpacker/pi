@@ -159,6 +159,23 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "anthropic.claude-opus-4-8": {
+            id: string;
+            name: string;
+            api: "bedrock-converse-stream";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "anthropic.claude-sonnet-4-5-20250929-v1:0": {
             id: string;
             name: string;
@@ -1768,6 +1785,23 @@ export declare const MODELS: {
             thinkingLevelMap: {
                 xhigh: string;
             };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "claude-opus-4-8": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -7801,6 +7835,23 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "claude-opus-4-8": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "claude-sonnet-4": {
             id: string;
             name: string;
@@ -8990,6 +9041,40 @@ export declare const MODELS: {
             thinkingLevelMap: {
                 xhigh: string;
             };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "anthropic/claude-opus-4.8": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "anthropic/claude-opus-4.8-fast": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -14294,6 +14379,23 @@ export declare const MODELS: {
             thinkingLevelMap: {
                 xhigh: string;
             };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "anthropic/claude-opus-4.8": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
             input: ("image" | "text")[];
             cost: {
                 input: number;

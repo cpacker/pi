@@ -29,9 +29,8 @@ import { buildBaseOptions } from "./simple-options.js";
 // ============================================================================
 const DEFAULT_CODEX_BASE_URL = "https://chatgpt.com/backend-api";
 const JWT_CLAIM_PATH = "https://api.openai.com/auth";
-const DEFAULT_MAX_RETRIES = 0;
+const MAX_RETRIES = 3;
 const BASE_DELAY_MS = 1000;
-const DEFAULT_MAX_RETRY_DELAY_MS = 60_000;
 const CODEX_TOOL_CALL_PROVIDERS = new Set(["openai", "openai-codex", "opencode"]);
 const WEBSOCKET_MESSAGE_TOO_BIG_CLOSE_CODE = 1009;
 const CODEX_RESPONSE_STATUSES = new Set([
@@ -45,43 +44,11 @@ const CODEX_RESPONSE_STATUSES = new Set([
 // ============================================================================
 // Retry Helpers
 // ============================================================================
-function isTerminalRateLimitError(errorText) {
-    return /GoUsageLimitError|FreeUsageLimitError|Monthly usage limit reached|available balance|insufficient_quota|out of budget|quota exceeded|billing/i.test(errorText);
-}
 function isRetryableError(status, errorText) {
-    if (status === 429 && isTerminalRateLimitError(errorText)) {
-        return false;
-    }
     if (status === 429 || status === 500 || status === 502 || status === 503 || status === 504) {
         return true;
     }
     return /rate.?limit|overloaded|service.?unavailable|upstream.?connect|connection.?refused/i.test(errorText);
-}
-function getRetryAfterDelayMs(headers) {
-    const retryAfterMs = headers.get("retry-after-ms");
-    if (retryAfterMs !== null) {
-        const millis = Number(retryAfterMs);
-        if (Number.isFinite(millis)) {
-            return Math.max(0, millis);
-        }
-    }
-    const retryAfter = headers.get("retry-after");
-    if (!retryAfter) {
-        return undefined;
-    }
-    const seconds = Number(retryAfter);
-    if (Number.isFinite(seconds)) {
-        return Math.max(0, seconds * 1000);
-    }
-    const date = Date.parse(retryAfter);
-    if (!Number.isNaN(date)) {
-        return Math.max(0, date - Date.now());
-    }
-    return undefined;
-}
-function capRetryDelayMs(delayMs, options) {
-    const maxRetryDelayMs = options?.maxRetryDelayMs ?? DEFAULT_MAX_RETRY_DELAY_MS;
-    return maxRetryDelayMs > 0 ? Math.min(delayMs, maxRetryDelayMs) : delayMs;
 }
 function sleep(ms, signal) {
     return new Promise((resolve, reject) => {
@@ -178,8 +145,7 @@ export const streamOpenAICodexResponses = (model, context, options) => {
             // Fetch with retry logic for rate limits and transient errors
             let response;
             let lastError;
-            const maxRetries = options?.maxRetries ?? DEFAULT_MAX_RETRIES;
-            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
                 if (options?.signal?.aborted) {
                     throw new Error("Request was aborted");
                 }
@@ -195,13 +161,30 @@ export const streamOpenAICodexResponses = (model, context, options) => {
                         break;
                     }
                     const errorText = await response.text();
-                    if (attempt < maxRetries && isRetryableError(response.status, errorText)) {
-                        const retryAfterDelayMs = getRetryAfterDelayMs(response.headers);
-                        const delayMs = retryAfterDelayMs === undefined
-                            ? BASE_DELAY_MS * 2 ** attempt
-                            : response.status === 429
-                                ? capRetryDelayMs(retryAfterDelayMs, options)
-                                : retryAfterDelayMs;
+                    if (attempt < MAX_RETRIES && isRetryableError(response.status, errorText)) {
+                        let delayMs = BASE_DELAY_MS * 2 ** attempt;
+                        const retryAfterMs = response.headers.get("retry-after-ms");
+                        if (retryAfterMs !== null) {
+                            const millis = Number(retryAfterMs);
+                            if (Number.isFinite(millis)) {
+                                delayMs = Math.max(0, millis);
+                            }
+                        }
+                        else {
+                            const retryAfter = response.headers.get("retry-after");
+                            if (retryAfter) {
+                                const seconds = Number(retryAfter);
+                                if (Number.isFinite(seconds)) {
+                                    delayMs = Math.max(0, seconds * 1000);
+                                }
+                                else {
+                                    const date = Date.parse(retryAfter);
+                                    if (!Number.isNaN(date)) {
+                                        delayMs = Math.max(0, date - Date.now());
+                                    }
+                                }
+                            }
+                        }
                         await sleep(delayMs, options?.signal);
                         continue;
                     }
@@ -221,7 +204,7 @@ export const streamOpenAICodexResponses = (model, context, options) => {
                     }
                     lastError = error instanceof Error ? error : new Error(String(error));
                     // Network errors are retryable
-                    if (attempt < maxRetries && !lastError.message.includes("usage limit")) {
+                    if (attempt < MAX_RETRIES && !lastError.message.includes("usage limit")) {
                         const delayMs = BASE_DELAY_MS * 2 ** attempt;
                         await sleep(delayMs, options?.signal);
                         continue;
@@ -1087,7 +1070,7 @@ function buildSSEHeaders(initHeaders, additionalHeaders, accountId, token, sessi
     headers.set("accept", "text/event-stream");
     headers.set("content-type", "application/json");
     if (sessionId) {
-        headers.set("session-id", sessionId);
+        headers.set("session_id", sessionId);
         headers.set("x-client-request-id", sessionId);
     }
     return headers;
@@ -1100,7 +1083,7 @@ function buildWebSocketHeaders(initHeaders, additionalHeaders, accountId, token,
     headers.delete("openai-beta");
     headers.set("OpenAI-Beta", OPENAI_BETA_RESPONSES_WEBSOCKETS);
     headers.set("x-client-request-id", requestId);
-    headers.set("session-id", requestId);
+    headers.set("session_id", requestId);
     return headers;
 }
 //# sourceMappingURL=openai-codex-responses.js.map

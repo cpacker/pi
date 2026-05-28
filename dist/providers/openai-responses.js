@@ -85,7 +85,7 @@ export const streamOpenAIResponses = (model, context, options) => {
             const requestOptions = {
                 ...(options?.signal ? { signal: options.signal } : {}),
                 ...(options?.timeoutMs !== undefined ? { timeout: options.timeoutMs } : {}),
-                maxRetries: options?.maxRetries ?? 0,
+                ...(options?.maxRetries !== undefined ? { maxRetries: options.maxRetries } : {}),
             };
             const { data: openaiStream, response } = await client.responses.create(params, requestOptions).withResponse();
             await options?.onResponse?.({ status: response.status, headers: headersToRecord(response.headers) }, model);
