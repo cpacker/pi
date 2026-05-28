@@ -3,8 +3,7 @@ name: Export pi-ai package branch
 on:
   push:
     branches:
-      - main
-      - feat/freeform-tools
+      - letta/pi-ai-vendor
     paths:
       - .github/workflows/export-pi-ai.yml
       - package-lock.json
