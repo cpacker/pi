@@ -11,9 +11,15 @@ import {
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 
+function redact(value) {
+  return value
+    .replace(/https:\/\/[^\s/@]+:[^\s/@]+@/g, "https://<redacted>@")
+    .replace(/https:\/\/[^\s/@]+@/g, "https://<redacted>@");
+}
+
 function run(command, args, options = {}) {
   const cwd = options.cwd ?? process.cwd();
-  console.log(`$ ${command} ${args.join(" ")}`);
+  console.log(`$ ${command} ${args.map(redact).join(" ")}`);
   const result = spawnSync(command, args, {
     cwd,
     encoding: "utf8",
@@ -106,10 +112,12 @@ const exportBranch = process.env.PI_AI_EXPORT_BRANCH ?? "pi-ai";
 const remoteName = process.env.PI_AI_EXPORT_REMOTE ?? "origin";
 const pushExport = process.env.PI_AI_EXPORT_PUSH !== "0";
 const buildPackage = process.env.PI_AI_EXPORT_SKIP_BUILD !== "1";
-const remoteUrl = git(["remote", "get-url", "--push", remoteName], {
-  cwd: repoRoot,
-  capture: true,
-});
+const remoteUrl =
+  process.env.PI_AI_EXPORT_REMOTE_URL ??
+  git(["remote", "get-url", "--push", remoteName], {
+    cwd: repoRoot,
+    capture: true,
+  });
 
 if (buildPackage) {
   run("npm", ["--workspace", "packages/ai", "run", "build"], { cwd: repoRoot });
