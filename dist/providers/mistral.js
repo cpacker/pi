@@ -1,11 +1,9 @@
 import { Mistral } from "@mistralai/mistralai";
-import { getEnvApiKey } from "../env-api-keys.js";
 import { calculateCost, clampThinkingLevel } from "../models.js";
 import { AssistantMessageEventStream } from "../utils/event-stream.js";
 import { shortHash } from "../utils/hash.js";
 import { parseStreamingJson } from "../utils/json-parse.js";
 import { sanitizeSurrogates } from "../utils/sanitize-unicode.js";
-import { functionToolCallArguments, isCustomTool, resolveFunctionTools } from "../utils/tool-support.js";
 import { buildBaseOptions } from "./simple-options.js";
 import { transformMessages } from "./transform-messages.js";
 const MISTRAL_TOOL_CALL_ID_LENGTH = 9;
@@ -18,7 +16,7 @@ export const streamMistral = (model, context, options) => {
     (async () => {
         const output = createOutput(model);
         try {
-            const apiKey = options?.apiKey || getEnvApiKey(model.provider);
+            const apiKey = options?.apiKey;
             if (!apiKey) {
                 throw new Error(`No API key for provider: ${model.provider}`);
             }
@@ -63,7 +61,7 @@ export const streamMistral = (model, context, options) => {
  * Maps provider-agnostic `SimpleStreamOptions` to Mistral options.
  */
 export const streamSimpleMistral = (model, context, options) => {
-    const apiKey = options?.apiKey || getEnvApiKey(model.provider);
+    const apiKey = options?.apiKey;
     if (!apiKey) {
         throw new Error(`No API key for provider: ${model.provider}`);
     }
@@ -179,7 +177,7 @@ function buildChatPayload(model, context, messages, options) {
     const payload = {
         model: model.id,
         stream: true,
-        messages: toChatMessages(messages, model.input.includes("image"), context.tools),
+        messages: toChatMessages(messages, model.input.includes("image")),
     };
     if (context.tools?.length)
         payload.tools = toFunctionTools(context.tools);
@@ -370,7 +368,7 @@ async function consumeChatStream(model, output, stream, mistralStream) {
     }
 }
 function toFunctionTools(tools) {
-    return resolveFunctionTools("Mistral", tools).map((tool) => ({
+    return tools.map((tool) => ({
         type: "function",
         function: {
             name: tool.name,
@@ -393,9 +391,8 @@ function stripSymbolKeys(value) {
     }
     return value;
 }
-function toChatMessages(messages, supportsImages, tools) {
+function toChatMessages(messages, supportsImages) {
     const result = [];
-    const customToolsByName = new Map(tools?.filter(isCustomTool).map((tool) => [tool.name, tool]) ?? []);
     for (const msg of messages) {
         if (msg.role === "user") {
             if (typeof msg.content === "string") {
@@ -441,10 +438,7 @@ function toChatMessages(messages, supportsImages, tools) {
                 toolCalls.push({
                     id: block.id,
                     type: "function",
-                    function: {
-                        name: block.name,
-                        arguments: JSON.stringify(functionToolCallArguments(block, customToolsByName.get(block.name))),
-                    },
+                    function: { name: block.name, arguments: JSON.stringify(block.arguments || {}) },
                 });
             }
             const assistantMessage = { role: "assistant" };

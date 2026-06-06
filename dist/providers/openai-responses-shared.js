@@ -2,7 +2,6 @@ import { calculateCost } from "../models.js";
 import { shortHash } from "../utils/hash.js";
 import { parseStreamingJson } from "../utils/json-parse.js";
 import { sanitizeSurrogates } from "../utils/sanitize-unicode.js";
-import { customToolCallArguments, customToolCallInput, isCustomTool, isCustomToolCall } from "../utils/tool-support.js";
 import { transformMessages } from "./transform-messages.js";
 // =============================================================================
 // Utilities
@@ -32,28 +31,11 @@ function parseTextSignature(signature) {
     }
     return { id: signature };
 }
-function isStreamingFunctionToolCall(block) {
-    return !isCustomToolCall(block) && "partialJson" in block;
-}
-function isStreamingCustomToolCall(block) {
-    return isCustomToolCall(block) && "partialInput" in block;
-}
-function normalizeCustomToolItemId(itemId) {
-    if (!itemId)
-        return undefined;
-    if (itemId.startsWith("ctc_"))
-        return itemId;
-    if (itemId.startsWith("fc_"))
-        return `ctc_${itemId.slice(3)}`;
-    return itemId;
-}
 // =============================================================================
 // Message conversion
 // =============================================================================
 export function convertResponsesMessages(model, context, allowedToolCallProviders, options) {
     const messages = [];
-    const customToolCallIds = new Set();
-    const customToolsByName = new Map(context.tools?.filter(isCustomTool).map((tool) => [tool.name, tool]) ?? []);
     const normalizeIdPart = (part) => {
         const sanitized = part.replace(/[^a-zA-Z0-9_-]/g, "_");
         const normalized = sanitized.length > 64 ? sanitized.slice(0, 64) : sanitized;
@@ -124,6 +106,7 @@ export function convertResponsesMessages(model, context, allowedToolCallProvider
             const isDifferentModel = assistantMsg.model !== model.id &&
                 assistantMsg.provider === model.provider &&
                 assistantMsg.api === model.api;
+            let textBlockIndex = 0;
             for (const block of msg.content) {
                 if (block.type === "thinking") {
                     if (block.thinkingSignature) {
@@ -134,10 +117,12 @@ export function convertResponsesMessages(model, context, allowedToolCallProvider
                 else if (block.type === "text") {
                     const textBlock = block;
                     const parsedSignature = parseTextSignature(textBlock.textSignature);
+                    const fallbackMessageId = textBlockIndex === 0 ? `msg_pi_${msgIndex}` : `msg_pi_${msgIndex}_${textBlockIndex}`;
+                    textBlockIndex++;
                     // OpenAI requires id to be max 64 characters
                     let msgId = parsedSignature?.id;
                     if (!msgId) {
-                        msgId = `msg_${msgIndex}`;
+                        msgId = fallbackMessageId;
                     }
                     else if (msgId.length > 64) {
                         msgId = `msg_${shortHash(msgId)}`;
@@ -158,30 +143,16 @@ export function convertResponsesMessages(model, context, allowedToolCallProvider
                     // For different-model messages, set id to undefined to avoid pairing validation.
                     // OpenAI tracks which fc_xxx IDs were paired with rs_xxx reasoning items.
                     // By omitting the id, we avoid triggering that validation (like cross-provider does).
-                    if (isDifferentModel && (itemId?.startsWith("fc_") || itemId?.startsWith("ctc_"))) {
+                    if (isDifferentModel && itemId?.startsWith("fc_")) {
                         itemId = undefined;
                     }
-                    const customTool = customToolsByName.get(toolCall.name);
-                    const customInput = customToolCallInput(toolCall, customTool);
-                    if (isCustomToolCall(toolCall) || (customTool && customInput !== undefined)) {
-                        customToolCallIds.add(callId);
-                        output.push({
-                            type: "custom_tool_call",
-                            id: normalizeCustomToolItemId(itemId),
-                            call_id: callId,
-                            name: toolCall.name,
-                            input: sanitizeSurrogates(customInput ?? ""),
-                        });
-                    }
-                    else {
-                        output.push({
-                            type: "function_call",
-                            id: itemId,
-                            call_id: callId,
-                            name: toolCall.name,
-                            arguments: JSON.stringify(toolCall.arguments),
-                        });
-                    }
+                    output.push({
+                        type: "function_call",
+                        id: itemId,
+                        call_id: callId,
+                        name: toolCall.name,
+                        arguments: JSON.stringify(toolCall.arguments),
+                    });
                 }
             }
             if (output.length === 0)
@@ -219,20 +190,11 @@ export function convertResponsesMessages(model, context, allowedToolCallProvider
             else {
                 output = sanitizeSurrogates(hasText ? textResult : "(see attached image)");
             }
-            if (customToolCallIds.has(callId)) {
-                messages.push({
-                    type: "custom_tool_call_output",
-                    call_id: callId,
-                    output,
-                });
-            }
-            else {
-                messages.push({
-                    type: "function_call_output",
-                    call_id: callId,
-                    output,
-                });
-            }
+            messages.push({
+                type: "function_call_output",
+                call_id: callId,
+                output,
+            });
         }
         msgIndex++;
     }
@@ -243,23 +205,13 @@ export function convertResponsesMessages(model, context, allowedToolCallProvider
 // =============================================================================
 export function convertResponsesTools(tools, options) {
     const strict = options?.strict === undefined ? false : options.strict;
-    return tools.map((tool) => {
-        if (isCustomTool(tool)) {
-            return {
-                type: "custom",
-                name: tool.name,
-                description: tool.description,
-                ...(tool.format ? { format: tool.format } : {}),
-            };
-        }
-        return {
-            type: "function",
-            name: tool.name,
-            description: tool.description,
-            parameters: tool.parameters, // TypeBox already generates JSON Schema
-            strict,
-        };
-    });
+    return tools.map((tool) => ({
+        type: "function",
+        name: tool.name,
+        description: tool.description,
+        parameters: tool.parameters, // TypeBox already generates JSON Schema
+        strict,
+    }));
 }
 // =============================================================================
 // Stream processing
@@ -295,21 +247,6 @@ export async function processResponsesStream(openaiStream, output, stream, model
                     name: item.name,
                     arguments: {},
                     partialJson: item.arguments || "",
-                };
-                output.content.push(currentBlock);
-                stream.push({ type: "toolcall_start", contentIndex: blockIndex(), partial: output });
-            }
-            else if (item.type === "custom_tool_call") {
-                currentItem = item;
-                const input = item.input || "";
-                currentBlock = {
-                    type: "toolCall",
-                    id: `${item.call_id}|${item.id ?? item.call_id}`,
-                    name: item.name,
-                    kind: "custom",
-                    arguments: customToolCallArguments(input),
-                    input,
-                    partialInput: input,
                 };
                 output.content.push(currentBlock);
                 stream.push({ type: "toolcall_start", contentIndex: blockIndex(), partial: output });
@@ -410,9 +347,7 @@ export async function processResponsesStream(openaiStream, output, stream, model
             }
         }
         else if (event.type === "response.function_call_arguments.delta") {
-            if (currentItem?.type === "function_call" &&
-                currentBlock?.type === "toolCall" &&
-                isStreamingFunctionToolCall(currentBlock)) {
+            if (currentItem?.type === "function_call" && currentBlock?.type === "toolCall") {
                 currentBlock.partialJson += event.delta;
                 currentBlock.arguments = parseStreamingJson(currentBlock.partialJson);
                 stream.push({
@@ -424,50 +359,12 @@ export async function processResponsesStream(openaiStream, output, stream, model
             }
         }
         else if (event.type === "response.function_call_arguments.done") {
-            if (currentItem?.type === "function_call" &&
-                currentBlock?.type === "toolCall" &&
-                isStreamingFunctionToolCall(currentBlock)) {
+            if (currentItem?.type === "function_call" && currentBlock?.type === "toolCall") {
                 const previousPartialJson = currentBlock.partialJson;
                 currentBlock.partialJson = event.arguments;
                 currentBlock.arguments = parseStreamingJson(currentBlock.partialJson);
                 if (event.arguments.startsWith(previousPartialJson)) {
                     const delta = event.arguments.slice(previousPartialJson.length);
-                    if (delta.length > 0) {
-                        stream.push({
-                            type: "toolcall_delta",
-                            contentIndex: blockIndex(),
-                            delta,
-                            partial: output,
-                        });
-                    }
-                }
-            }
-        }
-        else if (event.type === "response.custom_tool_call_input.delta") {
-            if (currentItem?.type === "custom_tool_call" &&
-                currentBlock?.type === "toolCall" &&
-                isStreamingCustomToolCall(currentBlock)) {
-                currentBlock.partialInput += event.delta;
-                currentBlock.input = currentBlock.partialInput;
-                currentBlock.arguments = customToolCallArguments(currentBlock.input);
-                stream.push({
-                    type: "toolcall_delta",
-                    contentIndex: blockIndex(),
-                    delta: event.delta,
-                    partial: output,
-                });
-            }
-        }
-        else if (event.type === "response.custom_tool_call_input.done") {
-            if (currentItem?.type === "custom_tool_call" &&
-                currentBlock?.type === "toolCall" &&
-                isStreamingCustomToolCall(currentBlock)) {
-                const previousPartialInput = currentBlock.partialInput;
-                currentBlock.partialInput = event.input;
-                currentBlock.input = event.input;
-                currentBlock.arguments = customToolCallArguments(currentBlock.input);
-                if (event.input.startsWith(previousPartialInput)) {
-                    const delta = event.input.slice(previousPartialInput.length);
                     if (delta.length > 0) {
                         stream.push({
                             type: "toolcall_delta",
@@ -506,13 +403,11 @@ export async function processResponsesStream(openaiStream, output, stream, model
                 currentBlock = null;
             }
             else if (item.type === "function_call") {
-                const args = currentBlock?.type === "toolCall" &&
-                    isStreamingFunctionToolCall(currentBlock) &&
-                    currentBlock.partialJson
+                const args = currentBlock?.type === "toolCall" && currentBlock.partialJson
                     ? parseStreamingJson(currentBlock.partialJson)
                     : parseStreamingJson(item.arguments || "{}");
                 let toolCall;
-                if (currentBlock?.type === "toolCall" && isStreamingFunctionToolCall(currentBlock)) {
+                if (currentBlock?.type === "toolCall") {
                     // Finalize in-place and strip the scratch buffer so replay only
                     // carries parsed arguments.
                     currentBlock.arguments = args;
@@ -525,30 +420,6 @@ export async function processResponsesStream(openaiStream, output, stream, model
                         id: `${item.call_id}|${item.id}`,
                         name: item.name,
                         arguments: args,
-                    };
-                }
-                currentBlock = null;
-                stream.push({ type: "toolcall_end", contentIndex: blockIndex(), toolCall, partial: output });
-            }
-            else if (item.type === "custom_tool_call") {
-                const input = currentBlock?.type === "toolCall" && isStreamingCustomToolCall(currentBlock) && currentBlock.partialInput
-                    ? currentBlock.partialInput
-                    : item.input;
-                let toolCall;
-                if (currentBlock?.type === "toolCall" && isStreamingCustomToolCall(currentBlock)) {
-                    currentBlock.input = input;
-                    currentBlock.arguments = customToolCallArguments(input);
-                    delete currentBlock.partialInput;
-                    toolCall = currentBlock;
-                }
-                else {
-                    toolCall = {
-                        type: "toolCall",
-                        id: `${item.call_id}|${item.id ?? item.call_id}`,
-                        name: item.name,
-                        kind: "custom",
-                        arguments: customToolCallArguments(input),
-                        input,
                     };
                 }
                 currentBlock = null;

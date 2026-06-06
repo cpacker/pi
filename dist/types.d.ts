@@ -5,7 +5,7 @@ export type KnownApi = "openai-completions" | "mistral-conversations" | "openai-
 export type Api = KnownApi | (string & {});
 export type KnownImagesApi = "openrouter-images";
 export type ImagesApi = KnownImagesApi | (string & {});
-export type KnownProvider = "amazon-bedrock" | "anthropic" | "google" | "google-vertex" | "openai" | "azure-openai-responses" | "openai-codex" | "deepseek" | "github-copilot" | "xai" | "groq" | "cerebras" | "openrouter" | "vercel-ai-gateway" | "zai" | "mistral" | "minimax" | "minimax-cn" | "moonshotai" | "moonshotai-cn" | "huggingface" | "fireworks" | "together" | "opencode" | "opencode-go" | "kimi-coding" | "cloudflare-workers-ai" | "cloudflare-ai-gateway" | "xiaomi" | "xiaomi-token-plan-cn" | "xiaomi-token-plan-ams" | "xiaomi-token-plan-sgp";
+export type KnownProvider = "amazon-bedrock" | "ant-ling" | "anthropic" | "google" | "google-vertex" | "openai" | "azure-openai-responses" | "openai-codex" | "nvidia" | "deepseek" | "github-copilot" | "xai" | "groq" | "cerebras" | "openrouter" | "vercel-ai-gateway" | "zai" | "zai-coding-cn" | "mistral" | "minimax" | "minimax-cn" | "moonshotai" | "moonshotai-cn" | "huggingface" | "fireworks" | "together" | "opencode" | "opencode-go" | "kimi-coding" | "cloudflare-workers-ai" | "cloudflare-ai-gateway" | "xiaomi" | "xiaomi-token-plan-cn" | "xiaomi-token-plan-ams" | "xiaomi-token-plan-sgp";
 export type Provider = KnownProvider | string;
 export type KnownImagesProvider = "openrouter";
 export type ImagesProvider = KnownImagesProvider | string;
@@ -58,8 +58,10 @@ export interface StreamOptions {
     onResponse?: (response: ProviderResponse, model: Model<Api>) => void | Promise<void>;
     /**
      * Optional custom HTTP headers to include in API requests.
-     * Merged with provider defaults; can override default headers.
-     * Not supported by all providers (e.g., AWS Bedrock uses SDK auth).
+     * Merged with provider defaults; caller values override default headers.
+     * On AWS Bedrock these are injected via a Smithy `build`-step middleware so
+     * they are covered by SigV4 signing; reserved headers (`x-amz-*`,
+     * `authorization`, `host`) are silently ignored to preserve SigV4 / bearer auth.
      */
     headers?: Record<string, string>;
     /**
@@ -67,6 +69,12 @@ export interface StreamOptions {
      * For example, OpenAI and Anthropic SDK clients default to 10 minutes.
      */
     timeoutMs?: number;
+    /**
+     * WebSocket connect timeout in milliseconds for providers that support
+     * WebSocket transports. This covers the connection/open handshake only;
+     * stream idleness after connection uses timeoutMs.
+     */
+    websocketConnectTimeoutMs?: number;
     /**
      * Maximum retry attempts for providers/SDKs that support client-side retries.
      * For example, OpenAI and Anthropic SDK clients default to 2.
@@ -163,14 +171,7 @@ export interface ToolCall {
     type: "toolCall";
     id: string;
     name: string;
-    /**
-     * Tool call payload kind. Omitted means the existing JSON-schema function
-     * tool protocol. Custom tool calls carry raw text input in `input`.
-     */
-    kind?: "function" | "custom";
     arguments: Record<string, any>;
-    /** Raw input for provider-native custom/freeform tools. */
-    input?: string;
     thoughtSignature?: string;
 }
 export interface Usage {
@@ -240,35 +241,10 @@ export interface Tool<TParameters extends TSchema = TSchema> {
     description: string;
     parameters: TParameters;
 }
-export type CustomToolInputFormat = {
-    type: "text";
-} | {
-    type: "grammar";
-    syntax: "lark" | "regex";
-    definition: string;
-};
-export interface CustomToolFunctionFallback<TParameters extends TSchema = TSchema> {
-    /** Override the function-tool description for providers without native custom tools. */
-    description?: string;
-    /** JSON Schema parameters for providers without native custom tools. */
-    parameters: TParameters;
-    /** Field that carries the raw custom input when falling back to a function tool. Default: `input`. */
-    inputField?: string;
-}
-export interface CustomTool<TParameters extends TSchema = TSchema> {
-    /** Provider-native freeform/custom tool. */
-    type: "custom";
-    name: string;
-    description: string;
-    format?: CustomToolInputFormat;
-    /** Explicit function-tool fallback for providers without native custom-tool support. */
-    fallback?: CustomToolFunctionFallback<TParameters>;
-}
-export type ToolDefinition<TParameters extends TSchema = TSchema> = Tool<TParameters> | CustomTool<TParameters>;
 export interface Context {
     systemPrompt?: string;
     messages: Message[];
-    tools?: ToolDefinition[];
+    tools?: Tool[];
 }
 /**
  * Event protocol for AssistantMessageEventStream.
@@ -355,9 +331,9 @@ export interface OpenAICompletionsCompat {
     requiresThinkingAsText?: boolean;
     /** Whether all replayed assistant messages must include an empty reasoning_content field when reasoning is enabled. Default: auto-detected from URL. */
     requiresReasoningContentOnAssistantMessages?: boolean;
-    /** Format for reasoning/thinking parameter. "openai" uses reasoning_effort, "openrouter" uses reasoning: { effort }, "deepseek" uses thinking: { type } plus reasoning_effort, "together" uses reasoning: { enabled } plus reasoning_effort when supported, "zai" uses top-level enable_thinking: boolean, "qwen" uses top-level enable_thinking: boolean, and "qwen-chat-template" uses chat_template_kwargs.enable_thinking. Default: "openai". */
-    thinkingFormat?: "openai" | "openrouter" | "deepseek" | "together" | "zai" | "qwen" | "qwen-chat-template";
-    /** OpenRouter-specific routing preferences. Only used when baseUrl points to OpenRouter. */
+    /** Format for reasoning/thinking parameter. "openai" uses reasoning_effort, "openrouter" uses reasoning: { effort }, "deepseek" uses thinking: { type } plus reasoning_effort when supported, "together" uses reasoning: { enabled } plus reasoning_effort when supported, "zai" uses top-level enable_thinking: boolean, "qwen" uses top-level enable_thinking: boolean, "qwen-chat-template" uses chat_template_kwargs.enable_thinking, "string-thinking" uses top-level thinking: string, and "ant-ling" uses reasoning: { effort } only when the mapped effort is non-null. Default: "openai". */
+    thinkingFormat?: "openai" | "openrouter" | "deepseek" | "together" | "zai" | "qwen" | "qwen-chat-template" | "string-thinking" | "ant-ling";
+    /** OpenRouter-compatible routing preferences sent as the `provider` request field. */
     openRouterRouting?: OpenRouterRouting;
     /** Vercel AI Gateway routing preferences. Only used when baseUrl points to Vercel AI Gateway. */
     vercelGatewayRouting?: VercelGatewayRouting;
@@ -408,6 +384,12 @@ export interface AnthropicMessagesCompat {
      */
     supportsCacheControlOnTools?: boolean;
     /**
+     * Whether the model accepts the Anthropic `temperature` request field.
+     * Claude Opus 4.7+ rejects non-default temperature values.
+     * Default: true.
+     */
+    supportsTemperature?: boolean;
+    /**
      * Whether to force adaptive thinking (`thinking.type: "adaptive"` plus
      * `output_config.effort`) regardless of the model id. Built-in models that
      * require adaptive thinking set this in generated metadata. Custom
@@ -417,6 +399,8 @@ export interface AnthropicMessagesCompat {
      * Default: false.
      */
     forceAdaptiveThinking?: boolean;
+    /** Whether to replay empty thinking signatures as `signature: ""` instead of converting thinking to text. Default: false. */
+    allowEmptySignature?: boolean;
 }
 /**
  * OpenRouter provider routing preferences.

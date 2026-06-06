@@ -1,11 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { getEnvApiKey } from "../env-api-keys.js";
 import { calculateCost } from "../models.js";
 import { AssistantMessageEventStream } from "../utils/event-stream.js";
 import { headersToRecord } from "../utils/headers.js";
 import { parseJsonWithRepair, parseStreamingJson } from "../utils/json-parse.js";
 import { sanitizeSurrogates } from "../utils/sanitize-unicode.js";
-import { functionToolCallArguments, isCustomTool, resolveFunctionTools } from "../utils/tool-support.js";
 import { resolveCloudflareBaseUrl } from "./cloudflare.js";
 import { buildCopilotDynamicHeaders, hasCopilotVisionInput } from "./github-copilot-headers.js";
 import { adjustMaxTokensForThinking, buildBaseOptions } from "./simple-options.js";
@@ -117,6 +115,8 @@ function getAnthropicCompat(model) {
         supportsLongCacheRetention: model.compat?.supportsLongCacheRetention ?? !isFireworks,
         sendSessionAffinityHeaders: model.compat?.sendSessionAffinityHeaders ?? !!(isFireworks || isCloudflareAiGatewayAnthropic),
         supportsCacheControlOnTools: model.compat?.supportsCacheControlOnTools ?? !isFireworks,
+        supportsTemperature: model.compat?.supportsTemperature ?? true,
+        allowEmptySignature: model.compat?.allowEmptySignature ?? false,
     };
 }
 function mergeHeaders(...headerSources) {
@@ -307,7 +307,10 @@ export const streamAnthropic = (model, context, options) => {
                 isOAuth = false;
             }
             else {
-                const apiKey = options?.apiKey ?? getEnvApiKey(model.provider) ?? "";
+                const apiKey = options?.apiKey;
+                if (!apiKey) {
+                    throw new Error(`No API key for provider: ${model.provider}`);
+                }
                 let copilotDynamicHeaders;
                 if (model.provider === "github-copilot") {
                     const hasImages = hasCopilotVisionInput(context.messages);
@@ -330,7 +333,7 @@ export const streamAnthropic = (model, context, options) => {
             const requestOptions = {
                 ...(options?.signal ? { signal: options.signal } : {}),
                 ...(options?.timeoutMs !== undefined ? { timeout: options.timeoutMs } : {}),
-                ...(options?.maxRetries !== undefined ? { maxRetries: options.maxRetries } : {}),
+                maxRetries: options?.maxRetries ?? 0,
             };
             const response = await client.messages.create({ ...params, stream: true }, requestOptions).asResponse();
             await options?.onResponse?.({ status: response.status, headers: headersToRecord(response.headers) }, model);
@@ -549,7 +552,7 @@ function mapThinkingLevelToEffort(model, level) {
     }
 }
 export const streamSimpleAnthropic = (model, context, options) => {
-    const apiKey = options?.apiKey || getEnvApiKey(model.provider);
+    const apiKey = options?.apiKey;
     if (!apiKey) {
         throw new Error(`No API key for provider: ${model.provider}`);
     }
@@ -656,9 +659,10 @@ function createClient(model, apiKey, interleavedThinking, useFineGrainedToolStre
 }
 function buildParams(model, context, isOAuthToken, options) {
     const { cacheControl } = getCacheControl(model, options?.cacheRetention);
+    const compat = getAnthropicCompat(model);
     const params = {
         model: model.id,
-        messages: convertMessages(context.messages, model, isOAuthToken, cacheControl, context.tools),
+        messages: convertMessages(context.messages, model, isOAuthToken, cacheControl, compat.allowEmptySignature),
         max_tokens: options?.maxTokens ?? model.maxTokens,
         stream: true,
     };
@@ -689,12 +693,11 @@ function buildParams(model, context, isOAuthToken, options) {
             },
         ];
     }
-    // Temperature is incompatible with extended thinking (adaptive or budget-based).
-    if (options?.temperature !== undefined && !options?.thinkingEnabled) {
+    // Temperature is incompatible with extended thinking and unsupported on Claude Opus 4.7+.
+    if (options?.temperature !== undefined && !options?.thinkingEnabled && compat.supportsTemperature) {
         params.temperature = options.temperature;
     }
     if (context.tools && context.tools.length > 0) {
-        const compat = getAnthropicCompat(model);
         params.tools = convertTools(context.tools, isOAuthToken, compat.supportsEagerToolInputStreaming, compat.supportsCacheControlOnTools ? cacheControl : undefined);
     }
     // Configure thinking mode: adaptive, budget-based, or explicitly disabled.
@@ -747,9 +750,8 @@ function buildParams(model, context, isOAuthToken, options) {
 function normalizeToolCallId(id) {
     return id.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 64);
 }
-function convertMessages(messages, model, isOAuthToken, cacheControl, tools) {
+function convertMessages(messages, model, isOAuthToken, cacheControl, allowEmptySignature = false) {
     const params = [];
-    const customToolsByName = new Map(tools?.filter(isCustomTool).map((tool) => [tool.name, tool]) ?? []);
     // Transform messages for cross-provider compatibility
     const transformedMessages = transformMessages(messages, model, normalizeToolCallId);
     for (let i = 0; i < transformedMessages.length; i++) {
@@ -819,13 +821,19 @@ function convertMessages(messages, model, isOAuthToken, cacheControl, tools) {
                     if (block.thinking.trim().length === 0)
                         continue;
                     // If thinking signature is missing/empty (e.g., from aborted stream),
-                    // convert to plain text block without <thinking> tags to avoid API rejection
-                    // and prevent Claude from mimicking the tags in responses
+                    // convert to plain text for Anthropic. Some compatible providers emit
+                    // and accept empty signatures, so let marked models preserve the block.
                     if (!block.thinkingSignature || block.thinkingSignature.trim().length === 0) {
-                        blocks.push({
-                            type: "text",
-                            text: sanitizeSurrogates(block.thinking),
-                        });
+                        blocks.push(allowEmptySignature
+                            ? {
+                                type: "thinking",
+                                thinking: sanitizeSurrogates(block.thinking),
+                                signature: "",
+                            }
+                            : {
+                                type: "text",
+                                text: sanitizeSurrogates(block.thinking),
+                            });
                     }
                     else {
                         blocks.push({
@@ -840,7 +848,7 @@ function convertMessages(messages, model, isOAuthToken, cacheControl, tools) {
                         type: "tool_use",
                         id: block.id,
                         name: isOAuthToken ? toClaudeCodeName(block.name) : block.name,
-                        input: functionToolCallArguments(block, customToolsByName.get(block.name)),
+                        input: block.arguments ?? {},
                     });
                 }
             }
@@ -912,8 +920,7 @@ function shouldUseFineGrainedToolStreamingBeta(model, context) {
 function convertTools(tools, isOAuthToken, supportsEagerToolInputStreaming, cacheControl) {
     if (!tools)
         return [];
-    const functionTools = resolveFunctionTools("Anthropic", tools);
-    return functionTools.map((tool, index) => {
+    return tools.map((tool, index) => {
         const schema = tool.parameters;
         return {
             name: isOAuthToken ? toClaudeCodeName(tool.name) : tool.name,
@@ -924,7 +931,7 @@ function convertTools(tools, isOAuthToken, supportsEagerToolInputStreaming, cach
                 properties: schema.properties ?? {},
                 required: schema.required ?? [],
             },
-            ...(cacheControl && index === functionTools.length - 1 ? { cache_control: cacheControl } : {}),
+            ...(cacheControl && index === tools.length - 1 ? { cache_control: cacheControl } : {}),
         };
     });
 }

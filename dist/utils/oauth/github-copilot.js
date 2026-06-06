@@ -93,10 +93,22 @@ async function startDeviceFlow(domain) {
         typeof expiresIn !== "number") {
         throw new Error("Invalid device code response fields");
     }
+    // The verification URI is opened in the user's browser and to prevent `open` from
+    // opening an executable or similar, we force it to be a URL.
+    let parsedUri;
+    try {
+        parsedUri = new URL(verificationUri);
+    }
+    catch {
+        throw new Error("Untrusted verification_uri in device code response");
+    }
+    if (parsedUri.protocol !== "https:" && parsedUri.protocol !== "http:") {
+        throw new Error("Untrusted verification_uri in device code response");
+    }
     return {
         device_code: deviceCode,
         user_code: userCode,
-        verification_uri: verificationUri,
+        verification_uri: parsedUri.href,
         interval,
         expires_in: expiresIn,
     };
@@ -122,7 +134,7 @@ async function pollForGitHubAccessToken(domain, device, signal) {
                 }),
             });
             if (raw && typeof raw === "object" && typeof raw.access_token === "string") {
-                return { status: "complete", accessToken: raw.access_token };
+                return { status: "complete", value: raw.access_token };
             }
             if (raw && typeof raw === "object" && typeof raw.error === "string") {
                 const { error, error_description: description } = raw;

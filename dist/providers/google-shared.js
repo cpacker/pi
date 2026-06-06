@@ -3,7 +3,6 @@
  */
 import { FinishReason, FunctionCallingConfigMode } from "@google/genai";
 import { sanitizeSurrogates } from "../utils/sanitize-unicode.js";
-import { functionToolCallArguments, isCustomTool, resolveFunctionTools } from "../utils/tool-support.js";
 import { transformMessages } from "./transform-messages.js";
 /**
  * Determines whether a streamed Gemini `Part` should be treated as "thinking".
@@ -76,7 +75,6 @@ function supportsMultimodalFunctionResponse(modelId) {
  */
 export function convertMessages(model, context) {
     const contents = [];
-    const customToolsByName = new Map(context.tools?.filter(isCustomTool).map((tool) => [tool.name, tool]) ?? []);
     const normalizeToolCallId = (id) => {
         if (!requiresToolCallId(model.id))
             return id;
@@ -153,7 +151,7 @@ export function convertMessages(model, context) {
                     const part = {
                         functionCall: {
                             name: block.name,
-                            args: functionToolCallArguments(block, customToolsByName.get(block.name)),
+                            args: block.arguments ?? {},
                             ...(requiresToolCallId(model.id) ? { id: block.id } : {}),
                         },
                         ...(thoughtSignature && { thoughtSignature }),
@@ -257,10 +255,9 @@ function sanitizeForOpenApi(schema) {
 export function convertTools(tools, useParameters = false) {
     if (tools.length === 0)
         return undefined;
-    const functionTools = resolveFunctionTools("Google", tools);
     return [
         {
-            functionDeclarations: functionTools.map((tool) => ({
+            functionDeclarations: tools.map((tool) => ({
                 name: tool.name,
                 description: tool.description,
                 ...(useParameters

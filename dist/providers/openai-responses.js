@@ -1,5 +1,4 @@
 import OpenAI from "openai";
-import { getEnvApiKey } from "../env-api-keys.js";
 import { clampThinkingLevel } from "../models.js";
 import { AssistantMessageEventStream } from "../utils/event-stream.js";
 import { headersToRecord } from "../utils/headers.js";
@@ -73,7 +72,10 @@ export const streamOpenAIResponses = (model, context, options) => {
         };
         try {
             // Create OpenAI client
-            const apiKey = options?.apiKey || getEnvApiKey(model.provider) || "";
+            const apiKey = options?.apiKey;
+            if (!apiKey) {
+                throw new Error(`No API key for provider: ${model.provider}`);
+            }
             const cacheRetention = resolveCacheRetention(options?.cacheRetention);
             const cacheSessionId = cacheRetention === "none" ? undefined : options?.sessionId;
             const client = createClient(model, context, apiKey, options?.headers, cacheSessionId);
@@ -85,7 +87,7 @@ export const streamOpenAIResponses = (model, context, options) => {
             const requestOptions = {
                 ...(options?.signal ? { signal: options.signal } : {}),
                 ...(options?.timeoutMs !== undefined ? { timeout: options.timeoutMs } : {}),
-                ...(options?.maxRetries !== undefined ? { maxRetries: options.maxRetries } : {}),
+                maxRetries: options?.maxRetries ?? 0,
             };
             const { data: openaiStream, response } = await client.responses.create(params, requestOptions).withResponse();
             await options?.onResponse?.({ status: response.status, headers: headersToRecord(response.headers) }, model);
@@ -118,7 +120,7 @@ export const streamOpenAIResponses = (model, context, options) => {
     return stream;
 };
 export const streamSimpleOpenAIResponses = (model, context, options) => {
-    const apiKey = options?.apiKey || getEnvApiKey(model.provider);
+    const apiKey = options?.apiKey;
     if (!apiKey) {
         throw new Error(`No API key for provider: ${model.provider}`);
     }
@@ -131,12 +133,6 @@ export const streamSimpleOpenAIResponses = (model, context, options) => {
     });
 };
 function createClient(model, context, apiKey, optionsHeaders, sessionId) {
-    if (!apiKey) {
-        if (!process.env.OPENAI_API_KEY) {
-            throw new Error("OpenAI API key is required. Set OPENAI_API_KEY environment variable or pass it as an argument.");
-        }
-        apiKey = process.env.OPENAI_API_KEY;
-    }
     const compat = getCompat(model);
     const headers = { ...model.headers };
     if (model.provider === "github-copilot") {

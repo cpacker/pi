@@ -1,5 +1,4 @@
 import { GoogleGenAI, } from "@google/genai";
-import { getEnvApiKey } from "../env-api-keys.js";
 import { calculateCost, clampThinkingLevel } from "../models.js";
 import { AssistantMessageEventStream } from "../utils/event-stream.js";
 import { sanitizeSurrogates } from "../utils/sanitize-unicode.js";
@@ -28,7 +27,10 @@ export const streamGoogle = (model, context, options) => {
             timestamp: Date.now(),
         };
         try {
-            const apiKey = options?.apiKey || getEnvApiKey(model.provider) || "";
+            const apiKey = options?.apiKey;
+            if (!apiKey) {
+                throw new Error(`No API key for provider: ${model.provider}`);
+            }
             const client = createClient(model, apiKey, options?.headers);
             let params = buildParams(model, context, options);
             const nextParams = await options?.onPayload?.(params, model);
@@ -214,7 +216,7 @@ export const streamGoogle = (model, context, options) => {
     return stream;
 };
 export const streamSimpleGoogle = (model, context, options) => {
-    const apiKey = options?.apiKey || getEnvApiKey(model.provider);
+    const apiKey = options?.apiKey;
     if (!apiKey) {
         throw new Error(`No API key for provider: ${model.provider}`);
     }

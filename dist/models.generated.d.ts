@@ -166,6 +166,9 @@ export declare const MODELS: {
             provider: string;
             baseUrl: string;
             reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -228,6 +231,26 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "au.anthropic.claude-opus-4-6-v1": {
+            id: string;
+            name: string;
+            api: "bedrock-converse-stream";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "au.anthropic.claude-opus-4-8": {
             id: string;
             name: string;
             api: "bedrock-converse-stream";
@@ -406,6 +429,26 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "eu.anthropic.claude-opus-4-8": {
+            id: string;
+            name: string;
+            api: "bedrock-converse-stream";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "eu.anthropic.claude-sonnet-4-5-20250929-v1:0": {
             id: string;
             name: string;
@@ -514,6 +557,26 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "global.anthropic.claude-opus-4-8": {
+            id: string;
+            name: string;
+            api: "bedrock-converse-stream";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "global.anthropic.claude-sonnet-4-5-20250929-v1:0": {
             id: string;
             name: string;
@@ -583,6 +646,26 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "jp.anthropic.claude-opus-4-7": {
+            id: string;
+            name: string;
+            api: "bedrock-converse-stream";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "jp.anthropic.claude-opus-4-8": {
             id: string;
             name: string;
             api: "bedrock-converse-stream";
@@ -1027,7 +1110,81 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "openai.gpt-5.4": {
+            id: string;
+            name: string;
+            api: "bedrock-converse-stream";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "openai.gpt-5.5": {
+            id: string;
+            name: string;
+            api: "bedrock-converse-stream";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "openai.gpt-oss-120b": {
+            id: string;
+            name: string;
+            api: "bedrock-converse-stream";
+            provider: string;
+            baseUrl: string;
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "openai.gpt-oss-120b-1:0": {
+            id: string;
+            name: string;
+            api: "bedrock-converse-stream";
+            provider: string;
+            baseUrl: string;
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "openai.gpt-oss-20b": {
             id: string;
             name: string;
             api: "bedrock-converse-stream";
@@ -1305,6 +1462,26 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "us.anthropic.claude-opus-4-8": {
+            id: string;
+            name: string;
+            api: "bedrock-converse-stream";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "us.anthropic.claude-sonnet-4-5-20250929-v1:0": {
             id: string;
             name: string;
@@ -1465,6 +1642,89 @@ export declare const MODELS: {
             provider: string;
             baseUrl: string;
             reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+    };
+    readonly "ant-ling": {
+        readonly "Ling-2.6-1T": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsLongCacheRetention: false;
+            };
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "Ling-2.6-flash": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsLongCacheRetention: false;
+            };
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "Ring-2.6-1T": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsLongCacheRetention: false;
+                thinkingFormat: "ant-ling";
+            };
+            reasoning: true;
+            thinkingLevelMap: {
+                off: null;
+                minimal: null;
+                low: null;
+                medium: null;
+                high: string;
+                xhigh: string;
+            };
             input: "text"[];
             cost: {
                 input: number;
@@ -1780,6 +2040,7 @@ export declare const MODELS: {
             baseUrl: string;
             compat: {
                 forceAdaptiveThinking: true;
+                supportsTemperature: false;
             };
             reasoning: true;
             thinkingLevelMap: {
@@ -1801,7 +2062,14 @@ export declare const MODELS: {
             api: "anthropic-messages";
             provider: string;
             baseUrl: string;
+            compat: {
+                forceAdaptiveThinking: true;
+                supportsTemperature: false;
+            };
             reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -2554,6 +2822,8 @@ export declare const MODELS: {
             thinkingLevelMap: {
                 off: null;
                 xhigh: string;
+                minimal: null;
+                low: null;
             };
             input: ("image" | "text")[];
             cost: {
@@ -2957,6 +3227,31 @@ export declare const MODELS: {
             baseUrl: string;
             compat: {
                 forceAdaptiveThinking: true;
+                supportsTemperature: false;
+            };
+            reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "claude-opus-4-8": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                forceAdaptiveThinking: true;
+                supportsTemperature: false;
             };
             reasoning: true;
             thinkingLevelMap: {
@@ -3506,26 +3801,6 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
-        readonly "@cf/moonshotai/kimi-k2.5": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            compat: {
-                sendSessionAffinityHeaders: true;
-            };
-            reasoning: true;
-            input: ("image" | "text")[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
         readonly "@cf/moonshotai/kimi-k2.6": {
             id: string;
             name: string;
@@ -3959,6 +4234,29 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "accounts/fireworks/routers/kimi-k2p6-fast": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                sendSessionAffinityHeaders: true;
+                supportsEagerToolInputStreaming: false;
+                supportsCacheControlOnTools: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "accounts/fireworks/routers/kimi-k2p6-turbo": {
             id: string;
             name: string;
@@ -4076,11 +4374,68 @@ export declare const MODELS: {
             };
             compat: {
                 forceAdaptiveThinking: true;
+                supportsTemperature: false;
             };
             reasoning: true;
             thinkingLevelMap: {
                 xhigh: string;
             };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "claude-opus-4.8": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "User-Agent": string;
+                "Editor-Version": string;
+                "Editor-Plugin-Version": string;
+                "Copilot-Integration-Id": string;
+            };
+            compat: {
+                forceAdaptiveThinking: true;
+                supportsTemperature: false;
+            };
+            reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "claude-sonnet-4": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "User-Agent": string;
+                "Editor-Version": string;
+                "Editor-Plugin-Version": string;
+                "Copilot-Integration-Id": string;
+            };
+            compat: {
+                supportsEagerToolInputStreaming: false;
+            };
+            reasoning: true;
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -4160,7 +4515,7 @@ export declare const MODELS: {
                 supportsDeveloperRole: false;
                 supportsReasoningEffort: false;
             };
-            reasoning: false;
+            reasoning: true;
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -4256,34 +4611,6 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "gpt-4.1": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            headers: {
-                "User-Agent": string;
-                "Editor-Version": string;
-                "Editor-Plugin-Version": string;
-                "Copilot-Integration-Id": string;
-            };
-            compat: {
-                supportsStore: false;
-                supportsDeveloperRole: false;
-                supportsReasoningEffort: false;
-            };
-            reasoning: false;
-            input: ("image" | "text")[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "gpt-4o": {
             id: string;
             name: string;
             api: "openai-completions";
@@ -4478,6 +4805,34 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "gpt-5.4-nano": {
+            id: string;
+            name: string;
+            api: "openai-responses";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "User-Agent": string;
+                "Editor-Version": string;
+                "Editor-Plugin-Version": string;
+                "Copilot-Integration-Id": string;
+            };
+            reasoning: true;
+            thinkingLevelMap: {
+                off: null;
+                minimal: string;
+                xhigh: string;
+            };
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "gpt-5.5": {
             id: string;
             name: string;
@@ -4506,7 +4861,7 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
-        readonly "grok-code-fast-1": {
+        readonly "raptor-mini": {
             id: string;
             name: string;
             api: "openai-completions";
@@ -4524,7 +4879,7 @@ export declare const MODELS: {
                 supportsReasoningEffort: false;
             };
             reasoning: true;
-            input: "text"[];
+            input: ("image" | "text")[];
             cost: {
                 input: number;
                 output: number;
@@ -5936,6 +6291,23 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "MiniMax-M3": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
     };
     readonly "minimax-cn": {
         readonly "MiniMax-M2.7": {
@@ -5972,6 +6344,23 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "MiniMax-M3": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
     };
     readonly mistral: {
         readonly "codestral-latest": {
@@ -5992,6 +6381,23 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "devstral-2512": {
+            id: string;
+            name: string;
+            api: "mistral-conversations";
+            provider: string;
+            baseUrl: string;
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "devstral-latest": {
             id: string;
             name: string;
             api: "mistral-conversations";
@@ -6286,7 +6692,7 @@ export declare const MODELS: {
             api: "mistral-conversations";
             provider: string;
             baseUrl: string;
-            reasoning: true;
+            reasoning: false;
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -6366,6 +6772,23 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "open-mistral-7b": {
+            id: string;
+            name: string;
+            api: "mistral-conversations";
+            provider: string;
+            baseUrl: string;
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "open-mistral-nemo": {
             id: string;
             name: string;
             api: "mistral-conversations";
@@ -6781,6 +7204,568 @@ export declare const MODELS: {
             };
             reasoning: true;
             input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+    };
+    readonly nvidia: {
+        readonly "meta/llama-3.1-70b-instruct": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "meta/llama-3.1-8b-instruct": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "meta/llama-3.2-11b-vision-instruct": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: false;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "meta/llama-3.2-90b-vision-instruct": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: false;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "meta/llama-3.3-70b-instruct": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "mistralai/mistral-large-3-675b-instruct-2512": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: false;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "mistralai/mistral-small-4-119b-2603": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "moonshotai/kimi-k2.6": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "nvidia/llama-3.3-nemotron-super-49b-v1": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "nvidia/llama-3.3-nemotron-super-49b-v1.5": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "nvidia/nemotron-3-nano-30b-a3b": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "nvidia/nemotron-3-super-120b-a12b": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "nvidia/nvidia-nemotron-nano-9b-v2": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "openai/gpt-oss-20b": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "qwen/qwen3-coder-480b-a35b-instruct": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "qwen/qwen3.5-122b-a10b": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "stepfun-ai/step-3.5-flash": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "stepfun-ai/step-3.7-flash": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "z-ai/glm-5.1": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            headers: {
+                "NVCF-POLL-SECONDS": string;
+            };
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+            };
+            reasoning: true;
+            input: "text"[];
             cost: {
                 input: number;
                 output: number;
@@ -7423,6 +8408,7 @@ export declare const MODELS: {
             thinkingLevelMap: {
                 off: string;
                 xhigh: string;
+                minimal: null;
             };
             input: ("image" | "text")[];
             cost: {
@@ -7444,6 +8430,8 @@ export declare const MODELS: {
             thinkingLevelMap: {
                 off: null;
                 xhigh: string;
+                minimal: null;
+                low: null;
             };
             input: ("image" | "text")[];
             cost: {
@@ -7593,48 +8581,6 @@ export declare const MODELS: {
         };
     };
     readonly "openai-codex": {
-        readonly "gpt-5.2": {
-            id: string;
-            name: string;
-            api: "openai-codex-responses";
-            provider: string;
-            baseUrl: string;
-            reasoning: true;
-            thinkingLevelMap: {
-                xhigh: string;
-                minimal: string;
-            };
-            input: ("image" | "text")[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "gpt-5.3-codex": {
-            id: string;
-            name: string;
-            api: "openai-codex-responses";
-            provider: string;
-            baseUrl: string;
-            reasoning: true;
-            thinkingLevelMap: {
-                xhigh: string;
-                minimal: string;
-            };
-            input: ("image" | "text")[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
         readonly "gpt-5.3-codex-spark": {
             id: string;
             name: string;
@@ -7820,6 +8766,7 @@ export declare const MODELS: {
             baseUrl: string;
             compat: {
                 forceAdaptiveThinking: true;
+                supportsTemperature: false;
             };
             reasoning: true;
             thinkingLevelMap: {
@@ -7841,7 +8788,14 @@ export declare const MODELS: {
             api: "anthropic-messages";
             provider: string;
             baseUrl: string;
+            compat: {
+                forceAdaptiveThinking: true;
+                supportsTemperature: false;
+            };
             reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -7897,6 +8851,34 @@ export declare const MODELS: {
             };
             reasoning: true;
             input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "deepseek-v4-flash": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                requiresReasoningContentOnAssistantMessages: true;
+                thinkingFormat: "deepseek";
+            };
+            reasoning: true;
+            thinkingLevelMap: {
+                minimal: null;
+                low: null;
+                medium: null;
+                high: string;
+                xhigh: string;
+            };
+            input: "text"[];
             cost: {
                 input: number;
                 output: number;
@@ -8350,6 +9332,8 @@ export declare const MODELS: {
             thinkingLevelMap: {
                 off: null;
                 xhigh: string;
+                minimal: null;
+                low: null;
             };
             input: ("image" | "text")[];
             cost: {
@@ -8367,7 +9351,16 @@ export declare const MODELS: {
             api: "openai-completions";
             provider: string;
             baseUrl: string;
+            compat: {
+                supportsReasoningEffort: false;
+            };
             reasoning: true;
+            thinkingLevelMap: {
+                off: null;
+                minimal: null;
+                low: null;
+                medium: null;
+            };
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -8401,6 +9394,10 @@ export declare const MODELS: {
             api: "openai-completions";
             provider: string;
             baseUrl: string;
+            compat: {
+                thinkingFormat: "deepseek";
+                supportsReasoningEffort: false;
+            };
             reasoning: true;
             input: ("image" | "text")[];
             cost: {
@@ -8463,7 +9460,24 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
-        readonly "nemotron-3-super-free": {
+        readonly "minimax-m3-free": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "nemotron-3-ultra-free": {
             id: string;
             name: string;
             api: "openai-completions";
@@ -8629,7 +9643,16 @@ export declare const MODELS: {
             api: "openai-completions";
             provider: string;
             baseUrl: string;
+            compat: {
+                thinkingFormat: "deepseek";
+                supportsReasoningEffort: false;
+            };
             reasoning: true;
+            thinkingLevelMap: {
+                minimal: null;
+                low: null;
+                medium: null;
+            };
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -8708,15 +9731,12 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
-        readonly "qwen3.5-plus": {
+        readonly "minimax-m3": {
             id: string;
             name: string;
-            api: "openai-completions";
+            api: "anthropic-messages";
             provider: string;
             baseUrl: string;
-            compat: {
-                thinkingFormat: "qwen";
-            };
             reasoning: true;
             input: ("image" | "text")[];
             cost: {
@@ -8756,6 +9776,23 @@ export declare const MODELS: {
             baseUrl: string;
             reasoning: true;
             input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "qwen3.7-plus": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: ("image" | "text")[];
             cost: {
                 input: number;
                 output: number;
@@ -9058,6 +10095,9 @@ export declare const MODELS: {
             provider: string;
             baseUrl: string;
             reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -9075,6 +10115,9 @@ export declare const MODELS: {
             provider: string;
             baseUrl: string;
             reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -9188,40 +10231,6 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly auto: {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: true;
-            input: ("image" | "text")[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "baidu/ernie-4.5-21b-a3b": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "baidu/ernie-4.5-vl-28b-a3b": {
             id: string;
             name: string;
             api: "openai-completions";
@@ -9484,35 +10493,6 @@ export declare const MODELS: {
             baseUrl: string;
             compat: {
                 requiresReasoningContentOnAssistantMessages: true;
-                thinkingFormat: "deepseek";
-            };
-            reasoning: true;
-            thinkingLevelMap: {
-                minimal: null;
-                low: null;
-                medium: null;
-                high: string;
-                xhigh: string;
-            };
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "deepseek/deepseek-v4-flash:free": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            compat: {
-                requiresReasoningContentOnAssistantMessages: true;
-                thinkingFormat: "deepseek";
             };
             reasoning: true;
             thinkingLevelMap: {
@@ -9540,7 +10520,6 @@ export declare const MODELS: {
             baseUrl: string;
             compat: {
                 requiresReasoningContentOnAssistantMessages: true;
-                thinkingFormat: "deepseek";
             };
             reasoning: true;
             thinkingLevelMap: {
@@ -9568,40 +10547,6 @@ export declare const MODELS: {
             baseUrl: string;
             reasoning: false;
             input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "google/gemini-2.0-flash-001": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: ("image" | "text")[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "google/gemini-2.0-flash-lite-001": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: ("image" | "text")[];
             cost: {
                 input: number;
                 output: number;
@@ -10090,6 +11035,23 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "meta-llama/llama-4-maverick": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            reasoning: false;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "meta-llama/llama-4-scout": {
             id: string;
             name: string;
@@ -10175,7 +11137,7 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
-        readonly "minimax/minimax-m2.5:free": {
+        readonly "minimax/minimax-m2.7": {
             id: string;
             name: string;
             api: "openai-completions";
@@ -10192,14 +11154,14 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
-        readonly "minimax/minimax-m2.7": {
+        readonly "minimax/minimax-m3": {
             id: string;
             name: string;
             api: "openai-completions";
             provider: string;
             baseUrl: string;
             reasoning: true;
-            input: "text"[];
+            input: ("image" | "text")[];
             cost: {
                 input: number;
                 output: number;
@@ -10227,40 +11189,6 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "mistralai/devstral-2512": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "mistralai/devstral-medium": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "mistralai/devstral-small": {
             id: string;
             name: string;
             api: "openai-completions";
@@ -10346,23 +11274,6 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "mistralai/mistral-large-2407": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "mistralai/mistral-large-2411": {
             id: string;
             name: string;
             api: "openai-completions";
@@ -10532,23 +11443,6 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
-        readonly "mistralai/pixtral-large-2411": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: ("image" | "text")[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
         readonly "mistralai/voxtral-small-24b-2507": {
             id: string;
             name: string;
@@ -10640,6 +11534,10 @@ export declare const MODELS: {
             api: "openai-completions";
             provider: string;
             baseUrl: string;
+            compat: {
+                supportsDeveloperRole: false;
+                requiresReasoningContentOnAssistantMessages: true;
+            };
             reasoning: true;
             input: ("image" | "text")[];
             cost: {
@@ -10657,6 +11555,10 @@ export declare const MODELS: {
             api: "openai-completions";
             provider: string;
             baseUrl: string;
+            compat: {
+                supportsDeveloperRole: false;
+                requiresReasoningContentOnAssistantMessages: true;
+            };
             reasoning: true;
             input: ("image" | "text")[];
             cost: {
@@ -10787,6 +11689,40 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "nvidia/nemotron-3-ultra-550b-a55b": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "nvidia/nemotron-3-ultra-550b-a55b:free": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "nvidia/nemotron-nano-12b-v2-vl:free": {
             id: string;
             name: string;
@@ -10890,40 +11826,6 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "openai/gpt-4": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "openai/gpt-4-0314": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "openai/gpt-4-1106-preview": {
             id: string;
             name: string;
             api: "openai-completions";
@@ -11084,23 +11986,6 @@ export declare const MODELS: {
             baseUrl: string;
             reasoning: false;
             input: ("image" | "text")[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "openai/gpt-4o-audio-preview": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: "text"[];
             cost: {
                 input: number;
                 output: number;
@@ -11543,6 +12428,9 @@ export declare const MODELS: {
             reasoning: true;
             thinkingLevelMap: {
                 xhigh: string;
+                off: null;
+                minimal: null;
+                low: null;
             };
             input: ("image" | "text")[];
             cost: {
@@ -11946,23 +12834,6 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "qwen/qwen-2.5-72b-instruct": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "qwen/qwen-2.5-7b-instruct": {
             id: string;
             name: string;
             api: "openai-completions";
@@ -12727,6 +13598,23 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "qwen/qwen3.7-plus": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "rekaai/reka-edge": {
             id: string;
             name: string;
@@ -12745,23 +13633,6 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "relace/relace-search": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: false;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "sao10k/l3-euryale-70b": {
             id: string;
             name: string;
             api: "openai-completions";
@@ -12803,6 +13674,23 @@ export declare const MODELS: {
             baseUrl: string;
             reasoning: true;
             input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "stepfun/step-3.7-flash": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: ("image" | "text")[];
             cost: {
                 input: number;
                 output: number;
@@ -12932,40 +13820,6 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "xiaomi/mimo-v2-flash": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: true;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "xiaomi/mimo-v2-omni": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            reasoning: true;
-            input: ("image" | "text")[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
-        readonly "xiaomi/mimo-v2-pro": {
             id: string;
             name: string;
             api: "openai-completions";
@@ -13855,6 +14709,37 @@ export declare const MODELS: {
             contextWindow: number;
             maxTokens: number;
         };
+        readonly "nvidia/nemotron-3-ultra-550b-a55b": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                supportsStore: false;
+                supportsDeveloperRole: false;
+                supportsReasoningEffort: false;
+                maxTokensField: "max_tokens";
+                supportsStrictMode: false;
+                supportsLongCacheRetention: false;
+                thinkingFormat: "together";
+            };
+            reasoning: true;
+            thinkingLevelMap: {
+                minimal: null;
+                low: null;
+                medium: null;
+            };
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
         readonly "openai/gpt-oss-120b": {
             id: string;
             name: string;
@@ -13941,7 +14826,7 @@ export declare const MODELS: {
             api: "anthropic-messages";
             provider: string;
             baseUrl: string;
-            reasoning: false;
+            reasoning: true;
             input: "text"[];
             cost: {
                 input: number;
@@ -13993,7 +14878,7 @@ export declare const MODELS: {
             provider: string;
             baseUrl: string;
             reasoning: true;
-            input: ("image" | "text")[];
+            input: "text"[];
             cost: {
                 input: number;
                 output: number;
@@ -14026,7 +14911,7 @@ export declare const MODELS: {
             api: "anthropic-messages";
             provider: string;
             baseUrl: string;
-            reasoning: false;
+            reasoning: true;
             input: "text"[];
             cost: {
                 input: number;
@@ -14060,7 +14945,7 @@ export declare const MODELS: {
             api: "anthropic-messages";
             provider: string;
             baseUrl: string;
-            reasoning: false;
+            reasoning: true;
             input: "text"[];
             cost: {
                 input: number;
@@ -14123,6 +15008,40 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "alibaba/qwen3-max-thinking": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "alibaba/qwen3-next-80b-a3b-instruct": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: false;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "alibaba/qwen3-next-80b-a3b-thinking": {
             id: string;
             name: string;
             api: "anthropic-messages";
@@ -14225,6 +15144,23 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "alibaba/qwen3.7-max": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "alibaba/qwen3.7-plus": {
             id: string;
             name: string;
             api: "anthropic-messages";
@@ -14374,6 +15310,7 @@ export declare const MODELS: {
             baseUrl: string;
             compat: {
                 forceAdaptiveThinking: true;
+                supportsTemperature: false;
             };
             reasoning: true;
             thinkingLevelMap: {
@@ -14395,7 +15332,14 @@ export declare const MODELS: {
             api: "anthropic-messages";
             provider: string;
             baseUrl: string;
+            compat: {
+                forceAdaptiveThinking: true;
+                supportsTemperature: false;
+            };
             reasoning: true;
+            thinkingLevelMap: {
+                xhigh: string;
+            };
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -14602,8 +15546,8 @@ export declare const MODELS: {
             api: "anthropic-messages";
             provider: string;
             baseUrl: string;
-            reasoning: false;
-            input: "text"[];
+            reasoning: true;
+            input: ("image" | "text")[];
             cost: {
                 input: number;
                 output: number;
@@ -14619,8 +15563,8 @@ export declare const MODELS: {
             api: "anthropic-messages";
             provider: string;
             baseUrl: string;
-            reasoning: false;
-            input: "text"[];
+            reasoning: true;
+            input: ("image" | "text")[];
             cost: {
                 input: number;
                 output: number;
@@ -14637,7 +15581,7 @@ export declare const MODELS: {
             provider: string;
             baseUrl: string;
             reasoning: true;
-            input: "text"[];
+            input: ("image" | "text")[];
             cost: {
                 input: number;
                 output: number;
@@ -14857,7 +15801,7 @@ export declare const MODELS: {
             api: "anthropic-messages";
             provider: string;
             baseUrl: string;
-            reasoning: false;
+            reasoning: true;
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -15164,7 +16108,7 @@ export declare const MODELS: {
             provider: string;
             baseUrl: string;
             reasoning: true;
-            input: ("image" | "text")[];
+            input: "text"[];
             cost: {
                 input: number;
                 output: number;
@@ -15175,6 +16119,23 @@ export declare const MODELS: {
             maxTokens: number;
         };
         readonly "minimax/minimax-m2.7-highspeed": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "minimax/minimax-m3": {
             id: string;
             name: string;
             api: "anthropic-messages";
@@ -15317,6 +16278,23 @@ export declare const MODELS: {
             provider: string;
             baseUrl: string;
             reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "mistral/mistral-nemo": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: false;
             input: "text"[];
             cost: {
                 input: number;
@@ -15471,6 +16449,40 @@ export declare const MODELS: {
             baseUrl: string;
             reasoning: true;
             input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "nvidia/nemotron-3-super-120b-a12b": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "nvidia/nemotron-3-ultra-550b-a55b": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: "text"[];
             cost: {
                 input: number;
                 output: number;
@@ -15657,7 +16669,7 @@ export declare const MODELS: {
             provider: string;
             baseUrl: string;
             reasoning: true;
-            input: "text"[];
+            input: ("image" | "text")[];
             cost: {
                 input: number;
                 output: number;
@@ -16032,8 +17044,28 @@ export declare const MODELS: {
             reasoning: true;
             thinkingLevelMap: {
                 xhigh: string;
+                off: null;
+                minimal: null;
+                low: null;
             };
             input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "openai/gpt-oss-120b": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: "text"[];
             cost: {
                 input: number;
                 output: number;
@@ -16203,6 +17235,40 @@ export declare const MODELS: {
             provider: string;
             baseUrl: string;
             reasoning: false;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "stepfun/step-3.5-flash": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "stepfun/step-3.7-flash": {
+            id: string;
+            name: string;
+            api: "anthropic-messages";
+            provider: string;
+            baseUrl: string;
+            reasoning: true;
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -16491,7 +17557,7 @@ export declare const MODELS: {
             api: "anthropic-messages";
             provider: string;
             baseUrl: string;
-            reasoning: false;
+            reasoning: true;
             input: ("image" | "text")[];
             cost: {
                 input: number;
@@ -16645,7 +17711,7 @@ export declare const MODELS: {
             provider: string;
             baseUrl: string;
             reasoning: true;
-            input: "text"[];
+            input: ("image" | "text")[];
             cost: {
                 input: number;
                 output: number;
@@ -16902,27 +17968,6 @@ export declare const MODELS: {
         };
     };
     readonly "xiaomi-token-plan-ams": {
-        readonly "mimo-v2-flash": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            compat: {
-                requiresReasoningContentOnAssistantMessages: true;
-                thinkingFormat: "deepseek";
-            };
-            reasoning: true;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
         readonly "mimo-v2-omni": {
             id: string;
             name: string;
@@ -17009,27 +18054,6 @@ export declare const MODELS: {
         };
     };
     readonly "xiaomi-token-plan-cn": {
-        readonly "mimo-v2-flash": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            compat: {
-                requiresReasoningContentOnAssistantMessages: true;
-                thinkingFormat: "deepseek";
-            };
-            reasoning: true;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
         readonly "mimo-v2-omni": {
             id: string;
             name: string;
@@ -17116,27 +18140,6 @@ export declare const MODELS: {
         };
     };
     readonly "xiaomi-token-plan-sgp": {
-        readonly "mimo-v2-flash": {
-            id: string;
-            name: string;
-            api: "openai-completions";
-            provider: string;
-            baseUrl: string;
-            compat: {
-                requiresReasoningContentOnAssistantMessages: true;
-                thinkingFormat: "deepseek";
-            };
-            reasoning: true;
-            input: "text"[];
-            cost: {
-                input: number;
-                output: number;
-                cacheRead: number;
-                cacheWrite: number;
-            };
-            contextWindow: number;
-            maxTokens: number;
-        };
         readonly "mimo-v2-omni": {
             id: string;
             name: string;
@@ -17223,6 +18226,117 @@ export declare const MODELS: {
         };
     };
     readonly zai: {
+        readonly "glm-4.5-air": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                supportsDeveloperRole: false;
+                thinkingFormat: "zai";
+            };
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "glm-4.7": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                supportsDeveloperRole: false;
+                thinkingFormat: "zai";
+                zaiToolStream: true;
+            };
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "glm-5-turbo": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                supportsDeveloperRole: false;
+                thinkingFormat: "zai";
+                zaiToolStream: true;
+            };
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "glm-5.1": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                supportsDeveloperRole: false;
+                thinkingFormat: "zai";
+                zaiToolStream: true;
+            };
+            reasoning: true;
+            input: "text"[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+        readonly "glm-5v-turbo": {
+            id: string;
+            name: string;
+            api: "openai-completions";
+            provider: string;
+            baseUrl: string;
+            compat: {
+                supportsDeveloperRole: false;
+                thinkingFormat: "zai";
+                zaiToolStream: true;
+            };
+            reasoning: true;
+            input: ("image" | "text")[];
+            cost: {
+                input: number;
+                output: number;
+                cacheRead: number;
+                cacheWrite: number;
+            };
+            contextWindow: number;
+            maxTokens: number;
+        };
+    };
+    readonly "zai-coding-cn": {
         readonly "glm-4.5-air": {
             id: string;
             name: string;

@@ -4,7 +4,16 @@
  * NOTE: This module uses Node.js crypto and http for the OAuth callback.
  * It is only intended for CLI use, not browser environments.
  */
-import type { OAuthCredentials, OAuthPrompt, OAuthProviderInterface } from "./types.ts";
+import type { OAuthCredentials, OAuthDeviceCodeInfo, OAuthPrompt, OAuthProviderInterface } from "./types.ts";
+export declare const OPENAI_CODEX_BROWSER_LOGIN_METHOD = "browser";
+export declare const OPENAI_CODEX_DEVICE_CODE_LOGIN_METHOD = "device_code";
+/**
+ * Login with OpenAI Codex OAuth using the Codex device-code flow.
+ */
+export declare function loginOpenAICodexDeviceCode(options: {
+    onDeviceCode: (info: OAuthDeviceCodeInfo) => void;
+    signal?: AbortSignal;
+}): Promise<OAuthCredentials>;
 /**
  * Login with OpenAI Codex OAuth
  *

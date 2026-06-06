@@ -1,6 +1,5 @@
 import { Compile } from "typebox/compile";
 import { Value } from "typebox/value";
-import { isCustomTool } from "./tool-support.js";
 const validatorCache = new WeakMap();
 const TYPEBOX_KIND = Symbol.for("TypeBox.Kind");
 function isRecord(value) {
@@ -252,12 +251,6 @@ export function validateToolCall(tools, toolCall) {
  * @throws Error with formatted message if validation fails
  */
 export function validateToolArguments(tool, toolCall) {
-    if (isCustomTool(tool)) {
-        if (toolCall.kind !== "custom") {
-            throw new Error(`Tool "${toolCall.name}" expected a custom/freeform tool call`);
-        }
-        return toolCall.input ?? "";
-    }
     const args = structuredClone(toolCall.arguments);
     Value.Convert(tool.parameters, args);
     const validator = getValidator(tool.parameters);

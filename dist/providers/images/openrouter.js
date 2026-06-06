@@ -1,5 +1,4 @@
 import OpenAI from "openai";
-import { getEnvApiKey } from "../../env-api-keys.js";
 import { headersToRecord } from "../../utils/headers.js";
 import { sanitizeSurrogates } from "../../utils/sanitize-unicode.js";
 export const generateImagesOpenRouter = async (model, context, options) => {
@@ -12,9 +11,9 @@ export const generateImagesOpenRouter = async (model, context, options) => {
         timestamp: Date.now(),
     };
     try {
-        const apiKey = options?.apiKey || getEnvApiKey(model.provider);
+        const apiKey = options?.apiKey;
         if (!apiKey) {
-            throw new Error(`No API key available for provider: ${model.provider}`);
+            throw new Error(`No API key for provider: ${model.provider}`);
         }
         const client = createClient(model, apiKey, options?.headers);
         let params = buildParams(model, context);
@@ -25,7 +24,7 @@ export const generateImagesOpenRouter = async (model, context, options) => {
         const requestOptions = {
             ...(options?.signal ? { signal: options.signal } : {}),
             ...(options?.timeoutMs !== undefined ? { timeout: options.timeoutMs } : {}),
-            ...(options?.maxRetries !== undefined ? { maxRetries: options.maxRetries } : {}),
+            maxRetries: options?.maxRetries ?? 0,
         };
         const { data: response, response: rawResponse } = await client.chat.completions
             .create(params, requestOptions)

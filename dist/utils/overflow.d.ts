@@ -18,7 +18,8 @@ import type { AssistantMessage } from "../types.ts";
  * - Groq: "reduce the length of the messages"
  * - Cerebras: 400/413 status code (no body)
  * - Mistral: "Prompt contains X tokens ... too large for model with Y maximum context length"
- * - OpenRouter (all backends): "maximum context length is X tokens"
+ * - OpenRouter (most backends): "maximum context length is X tokens"
+ * - OpenRouter/Poolside: "Input length X exceeds the maximum allowed input length of Y tokens."
  * - Together AI: "The input (X tokens) is longer than the model's context length (Y tokens)."
  * - llama.cpp: "exceeds the available context size"
  * - LM Studio: "greater than the context length"

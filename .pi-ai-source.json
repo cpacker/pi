@@ -1,6 +1,6 @@
 {
   "package": "@earendil-works/pi-ai",
-  "sourceBranch": "letta/pi-ai-vendor",
-  "sourceCommit": "0f770c4359fd999e54595e981c797befb7eaa84a",
-  "generatedAt": "2026-05-28T19:08:50.950Z"
+  "sourceBranch": "fix/openrouter-session-id",
+  "sourceCommit": "d4bcd59bd1677a642fe5ae2021c3240651a284b5",
+  "generatedAt": "2026-06-06T20:57:44Z"
 }

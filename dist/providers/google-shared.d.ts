@@ -2,7 +2,7 @@
  * Shared utilities for Google Generative AI and Google Vertex providers.
  */
 import { type Content, FinishReason, FunctionCallingConfigMode, type Part } from "@google/genai";
-import type { Context, Model, StopReason, ToolDefinition } from "../types.ts";
+import type { Context, Model, StopReason, Tool } from "../types.ts";
 type GoogleApiType = "google-generative-ai" | "google-vertex";
 /**
  * Thinking level for Gemini 3 models.
@@ -51,7 +51,7 @@ export declare function convertMessages<T extends GoogleApiType>(model: Model<T>
  * field instead (OpenAPI 3.03 Schema). This is needed for Cloud Code Assist with Claude
  * models, where the API translates `parameters` into Anthropic's `input_schema`.
  */
-export declare function convertTools(tools: ToolDefinition[], useParameters?: boolean): {
+export declare function convertTools(tools: Tool[], useParameters?: boolean): {
     functionDeclarations: Record<string, unknown>[];
 }[] | undefined;
 /**
