@@ -13,6 +13,7 @@ interface FakeOpenAIClientOptions {
 interface CapturedCompletionsPayload {
 	prompt_cache_key?: string;
 	prompt_cache_retention?: "24h" | "in-memory" | null;
+	session_id?: string;
 }
 
 const mockState = vi.hoisted(() => ({
@@ -202,5 +203,36 @@ describe("openai-completions prompt caching", () => {
 		expect(headers.session_id).toBe("override-session");
 		expect(headers["x-client-request-id"]).toBe("override-request");
 		expect(headers["x-session-affinity"]).toBe("override-affinity");
+	});
+
+	it("sets OpenRouter session_id in the request body for sticky prompt caching", async () => {
+		const model = createModel({
+			provider: "openrouter",
+			baseUrl: "https://openrouter.ai/api/v1",
+		});
+		const { payload } = await captureRequest({ sessionId: "openrouter-session" }, model);
+
+		expect(payload?.session_id).toBe("openrouter-session");
+	});
+
+	it("omits OpenRouter session_id when cacheRetention is none", async () => {
+		const model = createModel({
+			provider: "openrouter",
+			baseUrl: "https://openrouter.ai/api/v1",
+		});
+		const { payload } = await captureRequest({ cacheRetention: "none", sessionId: "openrouter-session" }, model);
+
+		expect(payload?.session_id).toBeUndefined();
+	});
+
+	it("clamps OpenRouter session_id to OpenRouter's 256-character limit", async () => {
+		const model = createModel({
+			provider: "openrouter",
+			baseUrl: "https://openrouter.ai/api/v1",
+		});
+		const sessionId = "x".repeat(260);
+		const { payload } = await captureRequest({ sessionId }, model);
+
+		expect(payload?.session_id).toBe("x".repeat(256));
 	});
 });

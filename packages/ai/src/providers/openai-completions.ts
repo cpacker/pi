@@ -84,6 +84,8 @@ interface OpenAICompatCacheControl {
 	ttl?: string;
 }
 
+const OPENROUTER_SESSION_ID_MAX_LENGTH = 256;
+
 type ResolvedOpenAICompletionsCompat = Omit<Required<OpenAICompletionsCompat>, "cacheControlFormat"> & {
 	cacheControlFormat?: OpenAICompletionsCompat["cacheControlFormat"];
 };
@@ -515,6 +517,12 @@ function buildParams(
 		prompt_cache_retention: cacheRetention === "long" && compat.supportsLongCacheRetention ? "24h" : undefined,
 	};
 
+	if (isOpenRouterModel(model) && cacheRetention !== "none" && options?.sessionId) {
+		(params as typeof params & { session_id?: string }).session_id = Array.from(options.sessionId)
+			.slice(0, OPENROUTER_SESSION_ID_MAX_LENGTH)
+			.join("");
+	}
+
 	if (compat.supportsUsageInStreaming !== false) {
 		(params as any).stream_options = { include_usage: true };
 	}
@@ -626,6 +634,10 @@ function buildParams(
 	}
 
 	return params;
+}
+
+function isOpenRouterModel(model: Model<"openai-completions">): boolean {
+	return model.provider === "openrouter" || model.baseUrl.includes("openrouter.ai");
 }
 
 function getCompatCacheControl(
